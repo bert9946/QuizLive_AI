@@ -1,0 +1,13 @@
+__pycache__/
+.DS_Store
+
+
+data/
+images/
+tmp/
+
+*.mov
+*.txt
+*.csv
+macocr*
+foo.py
