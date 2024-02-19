@@ -3,8 +3,10 @@ import datetime
 from termcolor import colored
 import argparse
 import json
-import asyncio
+import cv2 as cv
 
+
+from windowcapture import WindowCapture
 import crop
 import gpt
 import src.ocr as ocr
@@ -18,7 +20,8 @@ def main():
 
 	args = parser.parse_args()
 
-	windowId = getWindowId()
+	# windowId = getWindowId()
+	wincap = WindowCapture('影片錄製')
 
 	input("請按下 Enter 鍵繼續...")
 	while True:
@@ -32,15 +35,15 @@ def main():
 			image_path = 'data/images/' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + '.jpg'
 
 		#Capture image
-		captureWindow(image_path, windowId)
+		image = wincap.get_image_from_window()
 
 		capturing_time = time.time()
 
 		#Crop
-		cropped_image = crop.crop_image(image_path)
+		cropped_image = crop.crop_image(image)
 
 		#save image
-		cropped_image.save(image_path)
+		cv.imwrite(image_path, cropped_image)
 
 		cropping_time = time.time()
 
