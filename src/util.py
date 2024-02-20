@@ -61,8 +61,18 @@ def speak(text, rate=225):
     command = ['say', text, '--rate', str(rate)]
     try:
         process = subprocess.Popen(command)
-        process.communicate(timeout=3)
+        process.communicate(timeout=1.5)
     except subprocess.TimeoutExpired:
         process.kill()
 
-    # subprocess.call(command, timeout=1.5)
+# determine if a pixel is a given color with a tolerance
+def is_pixel_color_tolerance(pixel, color, tolerance=10):
+    return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))
+
+def is_triggered(image):
+    trigger_pixel_1 = 466, 140
+    trigger_pixel_2 = 520, 580
+    trigger_pixel_color_1 = image[trigger_pixel_1[1], trigger_pixel_1[0]]
+    trigger_pixel_color_2 = image[trigger_pixel_2[1], trigger_pixel_2[0]]
+
+    return is_pixel_color_tolerance(trigger_pixel_color_1, (255, 255, 255), 10) and is_pixel_color_tolerance(trigger_pixel_color_2, (34, 72, 185), 20)
