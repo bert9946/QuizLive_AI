@@ -11,6 +11,7 @@ import crop
 import gpt
 import src.ocr as ocr
 from src.util import *
+from adb import tap
 
 
 def main():
@@ -20,7 +21,8 @@ def main():
 
 	args = parser.parse_args()
 
-	window_name = '未命名.mov'
+	# window_name = '未命名.mov'
+	window_name = 'Android'
 
 	wincap = WindowCapture( window_name)
 
@@ -62,6 +64,11 @@ def main():
 
 			# GPT
 			ans = gpt.Anwser(text)
+
+			try:
+				tap(ans[0])
+			except ValueError:
+				tap('1')
 
 			# IMPORTANT: Print result
 			print(colored(ans + ' \n', 'red', attrs=['reverse']))

@@ -70,9 +70,25 @@ def is_pixel_color_tolerance(pixel, color, tolerance=10):
     return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))
 
 def is_triggered(image):
-    trigger_pixel_1 = 466, 140
-    trigger_pixel_2 = 520, 580
+
+    # quicktime player
+    # trigger_pixel_1 = 466, 140
+    # trigger_pixel_2 = 520, 580
+
+    # android emulator Pixel 7 pro
+    trigger_pixel_1 = 390, 124
+    trigger_pixel_2 = 430, 480
+
+    # guard: index out of range
+    if trigger_pixel_1[1] >= image.shape[0] or trigger_pixel_1[0] >= image.shape[1] or trigger_pixel_2[1] >= image.shape[0] or trigger_pixel_2[0] >= image.shape[1]:
+        return False
+
     trigger_pixel_color_1 = image[trigger_pixel_1[1], trigger_pixel_1[0]]
     trigger_pixel_color_2 = image[trigger_pixel_2[1], trigger_pixel_2[0]]
 
-    return is_pixel_color_tolerance(trigger_pixel_color_1, (255, 255, 255), 10) and is_pixel_color_tolerance(trigger_pixel_color_2, (34, 72, 185), 20)
+
+    # BGR
+    color1 = (255, 255, 255)
+    color2 = (34, 72, 185)
+
+    return is_pixel_color_tolerance(trigger_pixel_color_1, color1, 90) and is_pixel_color_tolerance(trigger_pixel_color_2, color2, 30)
