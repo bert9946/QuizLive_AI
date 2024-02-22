@@ -92,3 +92,23 @@ def is_triggered(image):
     color2 = (34, 72, 185)
 
     return is_pixel_color_tolerance(trigger_pixel_color_1, color1, 90) and is_pixel_color_tolerance(trigger_pixel_color_2, color2, 30)
+
+def matchCorrentAnswer(image):
+    x = 170
+    y = 920
+    # x = 80
+    # y = 500
+
+    delat_y = 155
+
+    target_color = (141, 168, 26)
+    
+    if is_pixel_color_tolerance(image[y, x], target_color, 30):
+        return 1
+    if is_pixel_color_tolerance(image[y + delat_y, x], target_color, 30):
+        return 2
+    if is_pixel_color_tolerance(image[y + delat_y * 2, x], target_color, 30):
+        return 3
+    if is_pixel_color_tolerance(image[y + delat_y * 3, x], target_color, 30):
+        return 4
+    return -1

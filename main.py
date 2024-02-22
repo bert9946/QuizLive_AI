@@ -24,7 +24,7 @@ def main():
 	# window_name = '未命名.mov'
 	window_name = 'Android'
 
-	wincap = WindowCapture( window_name)
+	wincap = WindowCapture(window_name)
 
 	input("請按下 Enter 鍵繼續...")
 	while True:
@@ -74,30 +74,33 @@ def main():
 			print(colored(ans + ' \n', 'red', attrs=['reverse']))
 			end_time = time.time()
 
-			print(colored(f'截圖時間: {calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
-			print(colored(f'裁剪時間: {calculateExecutionTime(capturing_time, cropping_time)} 毫秒', 'dark_grey'))
-			print(colored(f'OCR 時間: {calculateExecutionTime(cropping_time, ocr_time)} 毫秒', 'dark_grey'))
-			print(colored(f'GPT 時間: {calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
+			print(colored(f'截圖時間：{calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
+			print(colored(f'裁剪時間：{calculateExecutionTime(capturing_time, cropping_time)} 毫秒', 'dark_grey'))
+			print(colored(f'OCR 時間：{calculateExecutionTime(cropping_time, ocr_time)} 毫秒', 'dark_grey'))
+			print(colored(f'GPT 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
 
 			execution_time = end_time - start_time
 
-			print(colored(f'執行時間: {calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
-			print('====================')
+			print(colored(f'執行時間： {calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
 
 			question, options = splitQuestionAndOptions(text)
 
 			if args.speech: speak(ans[2:])
 
-
-			real_ans = ''
-			# real_ans = input("正確答案： ")
-
-			#save data
-
+			# save data
 			if not args.test:
 				data_path = 'data/data.json'
 			else:
 				data_path = 'data/test.json'
+
+			# while time.time() - end_time < 1:
+			while True:
+				image = wincap.get_image_from_window()
+				real_ans = matchCorrentAnswer(image)
+				if real_ans != -1:
+					print(f'正確答案：{real_ans}')
+					break
+			print('====================')
 
 			with open(data_path, 'r', encoding='utf8') as file:
 				obj = json.load(file)
