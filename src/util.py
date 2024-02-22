@@ -14,7 +14,7 @@ def calculateExecutionTime(start_time, end_time):
     return int((end_time - start_time) * 1000)
 
 def splitQuestionAndOptions(text):
-    lines = text.split('\n')
+    lines = text.strip().split('\n')
     question = ''.join(lines[:-4])
     options = lines[-4:]
 
