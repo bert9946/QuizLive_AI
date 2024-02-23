@@ -133,7 +133,7 @@ def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_t
     for item in data:
         question_score = fuzz.ratio(question, item['question'])
         if question_score > question_score_threshold:
-            options_score = fuzz.token_sort_ratio(options_str, ''.join(item['options']))
+            options_score = fuzz.token_sort_ratio(options_str, ' '.join(item['options']))
             if options_score > options_score_threshold:
                 ans = item['options'][int(item['real_ans'])-1]
                 ans_fuzz_score = []
