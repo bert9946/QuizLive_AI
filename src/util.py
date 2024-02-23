@@ -123,7 +123,7 @@ def matchQuestionFromDatabase(text):
             return item['real_ans']
 
 # TODO: use candidate to find the answer
-def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=90, options_score_threshold=80):
+def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=80, options_score_threshold=80):
     with open(data_path, 'r', encoding='utf8') as file:
         data = json.load(file)
 
