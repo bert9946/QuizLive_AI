@@ -1,5 +1,6 @@
 import subprocess
 import json
+from thefuzz import fuzz
 
 def getWindowId():
 	command = ['osascript', '-e', 'tell app "QuickTime Player" to id of window 1']
@@ -112,3 +113,37 @@ def matchCorrentAnswer(image):
     if is_pixel_color_tolerance(image[y + delat_y * 3, x], target_color, 30):
         return 4
     return -1
+
+def matchQuestionFromDatabase(text):
+    with open('data/data.json', 'r', encoding='utf8') as file:
+        data = json.load(file)
+
+    for item in data:
+        if item['question'] == text:
+            return item['real_ans']
+
+# TODO: use candidate to find the answer
+def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=90, options_score_threshold=80):
+    with open(data_path, 'r', encoding='utf8') as file:
+        data = json.load(file)
+
+    question, options = splitQuestionAndOptions(text)
+    options_str = ' '.join(options)
+
+    for item in data:
+        question_score = fuzz.ratio(question, item['question'])
+        if question_score > question_score_threshold:
+            options_score = fuzz.token_sort_ratio(options_str, ''.join(item['options']))
+            if options_score > options_score_threshold:
+                ans = item['options'][int(item['real_ans'])-1]
+                ans_fuzz_score = []
+                for option in options:
+                    ans_fuzz_score.append(fuzz.ratio(option, ans))
+                ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
+                return str(ans_index) + '. ' + ans
+            
+                
+                    
+
+                        
+    return None

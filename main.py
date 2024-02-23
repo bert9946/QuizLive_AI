@@ -60,8 +60,15 @@ def main():
 			print(text)
 			ocr_time = time.time()
 
-			# GPT
-			ans = gpt.Anwser(text)
+			# Match question from database
+			if ans := matchQuestionFromDatabase(text):
+				ans_color = 'blue'
+				ans_source = 'database'
+			else:
+				# GPT
+				ans_color = 'yellow'
+				ans = gpt.Anwser(text)
+				ans_source = 'GPT'
 
 			try:
 				tap(ans[0])
@@ -69,14 +76,16 @@ def main():
 				tap('1')
 
 			# IMPORTANT: Print result
-			print(colored(ans + ' \n', 'red', attrs=['reverse']))
+			print(colored(ans + ' \n', ans_color, attrs=['reverse']))
+			print(colored(f'from {ans_source}', 'dark_grey'))
 			end_time = time.time()
 
 			print(colored(f'截圖時間：{calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
 			print(colored(f'OCR 時間：{calculateExecutionTime(capturing_time, ocr_time)} 毫秒', 'dark_grey'))
-			print(colored(f'裁剪時間：{calculateExecutionTime(capturing_time, cropping_time)} 毫秒', 'dark_grey'))
-			print(colored(f'OCR 時間：{calculateExecutionTime(cropping_time, ocr_time)} 毫秒', 'dark_grey'))
-			print(colored(f'GPT 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
+			if ans_source == 'GPT':
+				print(colored(f'GPT 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
+			elif ans_source == 'database':
+				print(colored(f'比對時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
 
 			execution_time = end_time - start_time
 
