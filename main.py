@@ -37,25 +37,23 @@ def main():
 		image = wincap.get_image_from_window()
 
 		if not is_triggered(image):
-			print('waiting', end='\r', flush=True)
+			print(colored('waiting', 'dark_grey'), end='\r', flush=True)
 		else:
-			print('Triggered')
+			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			time.sleep(3.25)
 
 			start_time = time.time()
 
 			image = wincap.get_image_from_window()
-			print('Captured')
-			capturing_time = time.time()
+			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
 
 			# Crop
 			cropped_image = crop.crop_image(image)
-			print('Cropped')
+			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
+			capturing_time = time.time()
 
 			# save image
 			cv.imwrite(image_path, cropped_image)
-
-			cropping_time = time.time()
 
 			# OCR
 			text = ocr.ocr(image_path)
@@ -75,13 +73,14 @@ def main():
 			end_time = time.time()
 
 			print(colored(f'截圖時間：{calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
+			print(colored(f'OCR 時間：{calculateExecutionTime(capturing_time, ocr_time)} 毫秒', 'dark_grey'))
 			print(colored(f'裁剪時間：{calculateExecutionTime(capturing_time, cropping_time)} 毫秒', 'dark_grey'))
 			print(colored(f'OCR 時間：{calculateExecutionTime(cropping_time, ocr_time)} 毫秒', 'dark_grey'))
 			print(colored(f'GPT 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
 
 			execution_time = end_time - start_time
 
-			print(colored(f'執行時間： {calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
+			print(colored(f'執行時間：{calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
 
 			question, options = splitQuestionAndOptions(text)
 
@@ -98,7 +97,10 @@ def main():
 				image = wincap.get_image_from_window()
 				real_ans = matchCorrentAnswer(image)
 				if real_ans != -1:
-					print(f'正確答案：{real_ans}')
+					if int(ans[0]) == real_ans:
+						print('正確答案：', colored(real_ans, 'green'))
+					else:
+						print('正確答案：', colored(real_ans, 'red'))
 					break
 			print('====================')
 
