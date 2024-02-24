@@ -135,10 +135,10 @@ def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_t
             if (question_score := fuzz.ratio(question, item['question'])) > question_score_threshold:
                 if (options_score := fuzz.token_sort_ratio(options_str, ' '.join(item['options']))) > options_score_threshold:
                     ans = item['options'][int(item['real_ans'])-1]
-                    ans_fuzz_score = []
+                    ans_fuzz_scores = []
                     for option in options:
-                        ans_fuzz_score.append(fuzz.ratio(option, ans))
-                    ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
+                        ans_fuzz_scores.append(fuzz.ratio(option, ans))
+                    ans_index = ans_fuzz_scores.index(max(ans_fuzz_scores)) + 1
                     return str(ans_index) + '. ' + ans
     return None
 
