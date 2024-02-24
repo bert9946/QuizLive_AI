@@ -65,23 +65,22 @@ def main():
 				print(colored(option, 'light_grey'))
 
 			# Match question from database
-			if ans := matchQuestionFromDatabase(text):
+			if ans_index := matchQuestionFromDatabase(text):
 				ans_color = 'blue'
 				ans_source = 'database'
+				ans_text = options[int(ans_index) - 1]
 			else: # GPT
-				ans = gpt.Anwser(text)
+				ans_text = gpt.Anwser(text)
+				ans_index = matchOption(ans_text, options)
 				ans_color = 'yellow'
 				ans_source = 'GPT'
-
-			if (ans_index := ans[0]) not in ['1', '2', '3', '4']:
-				ans = matchOption(ans, options)
-				ans_index = ans[0]
+			ans = str(ans_index) + '. ' + ans_text
 
 			# Tap
 			try:
 				tap(ans_index)
 			except ValueError:
-				tap('1')
+				tap(1)
 
 			# IMPORTANT: Print result
 			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
@@ -99,7 +98,7 @@ def main():
 
 			print(colored(f'執行時間：{calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
 
-			if args.speech: speak(ans[2:])
+			if args.speech: speak(ans_text)
 
 			# save data
 			if not args.test:
@@ -112,7 +111,7 @@ def main():
 				image = wincap.get_image_from_window()
 				real_ans = matchCorrentAnswer(image)
 				if real_ans != -1:
-					if int(ans[0]) == real_ans:
+					if int(ans_index) == real_ans:
 						print('正確答案：', colored(real_ans, 'green'))
 					else:
 						print('正確答案：', colored(real_ans, 'red'))

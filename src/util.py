@@ -158,4 +158,4 @@ def matchOption(text, options):
     for option in options:
         ans_fuzz_score.append(fuzz.ratio(text, option))
     ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
-    return str(ans_index) + '. ' + options[ans_index-1]
+    return ans_index
