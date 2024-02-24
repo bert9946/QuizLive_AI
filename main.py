@@ -60,18 +60,24 @@ def main():
 			print(text)
 			ocr_time = time.time()
 
+			question, options = splitQuestionAndOptions(text)
+
 			# Match question from database
 			if ans := matchQuestionFromDatabase(text):
 				ans_color = 'blue'
 				ans_source = 'database'
-			else:
-				# GPT
-				ans_color = 'yellow'
+			else: # GPT
 				ans = gpt.Anwser(text)
+				ans_color = 'yellow'
 				ans_source = 'GPT'
 
+			if (ans_index := ans[0]) not in ['1', '2', '3', '4']:
+				ans = matchOption(ans, options)
+				ans_index = ans[0]
+
+			# Tap
 			try:
-				tap(ans[0])
+				tap(ans_index)
 			except ValueError:
 				tap('1')
 
@@ -90,8 +96,6 @@ def main():
 			execution_time = end_time - start_time
 
 			print(colored(f'執行時間：{calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
-
-			question, options = splitQuestionAndOptions(text)
 
 			if args.speech: speak(ans[2:])
 
