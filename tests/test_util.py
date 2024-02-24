@@ -67,3 +67,9 @@ def test_modifyData():
 			]
 	}
 	assert modifyData(data) == expected_result
+
+def test_matchOption():
+	text = 'c'
+	options = ['a', 'b', 'c', 'd']
+	ans = matchOption(text, options)
+	assert ans == '3. c'
