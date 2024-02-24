@@ -122,7 +122,7 @@ def matchQuestionFromDatabase(text):
         if item['question'] == text:
             return item['real_ans']
 
-def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=80, options_score_threshold=80):
+def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=95, options_score_threshold=80):
     with open(data_path, 'r', encoding='utf8') as file:
         data = json.load(file)
 
