@@ -17,7 +17,8 @@ def test_splitQuestionAndOptions():
 酚醛樹脂
 聚異丁烯
 聚醯亞胺
-聚酯纖維'''
+聚酯纖維
+'''
 
 	text2 = '''這個問題
 沒有問號
