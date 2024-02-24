@@ -6,7 +6,7 @@ def calculateAccuracyStats(data):
 	for entry in data:
 		if entry['real_ans'] == '':
 			continue
-		if entry['ans'][0] == entry['real_ans']:
+		if entry['ans'][0] == str(entry['real_ans']):
 			accurate += 1
 		total += 1
 	return accurate, total
