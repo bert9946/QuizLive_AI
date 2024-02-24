@@ -122,7 +122,6 @@ def matchQuestionFromDatabase(text):
         if item['question'] == text:
             return item['real_ans']
 
-# TODO: use candidate to find the answer
 def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=80, options_score_threshold=80):
     with open(data_path, 'r', encoding='utf8') as file:
         data = json.load(file)
@@ -130,17 +129,33 @@ def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_t
     question, options = splitQuestionAndOptions(text)
     options_str = ' '.join(options)
 
+    candidates = []
     for item in data:
         if item['real_ans'] in [1, 2, 3, 4]:
             if (question_score := fuzz.ratio(question, item['question'])) > question_score_threshold:
                 if (options_score := fuzz.token_sort_ratio(options_str, ' '.join(item['options']))) > options_score_threshold:
-                    ans = item['options'][int(item['real_ans'])-1]
-                    ans_fuzz_scores = []
-                    for option in options:
-                        ans_fuzz_scores.append(fuzz.ratio(option, ans))
-                    ans_index = ans_fuzz_scores.index(max(ans_fuzz_scores)) + 1
-                    return str(ans_index) + '. ' + ans
-    return None
+                    item['question_score'] = question_score
+                    item['options_score'] = options_score
+                    candidates.append(item)
+
+    if candidates == []:
+        return None
+
+    # find the candidate of quesiton with the highest score
+    question_options_score = []
+    for candidate in candidates:
+        question_options_score.append(candidate['question_score'] + candidate['options_score'])
+    max_score_index = question_options_score.index(max(question_options_score))
+
+    target = candidates[max_score_index]
+
+    # find the option with the highest score
+    ans = target['options'][int(target['real_ans'])-1]
+    ans_fuzz_scores = []
+    for option in options:
+        ans_fuzz_scores.append(fuzz.ratio(option, ans))
+    ans_index = ans_fuzz_scores.index(max(ans_fuzz_scores)) + 1
+    return str(ans_index) + '. ' + ans
 
 def matchOption(text, options):
     ans_fuzz_score = []
