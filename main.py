@@ -57,10 +57,12 @@ def main():
 
 			# OCR
 			text = ocr.ocr(image_path)
-			print(text)
 			ocr_time = time.time()
 
 			question, options = splitQuestionAndOptions(text)
+			print(colored(question, 'light_grey'))
+			for option in options:
+				print(colored(option, 'light_grey'))
 
 			# Match question from database
 			if ans := matchQuestionFromDatabase(text):
@@ -82,7 +84,7 @@ def main():
 				tap('1')
 
 			# IMPORTANT: Print result
-			print(colored(ans + ' \n', ans_color, attrs=['reverse']))
+			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
 			print(colored(f'from {ans_source}', 'dark_grey'))
 			end_time = time.time()
 
