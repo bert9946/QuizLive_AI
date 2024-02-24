@@ -151,11 +151,7 @@ def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_t
 
     # find the option with the highest score
     ans = target['options'][int(target['real_ans'])-1]
-    ans_fuzz_scores = []
-    for option in options:
-        ans_fuzz_scores.append(fuzz.ratio(option, ans))
-    ans_index = ans_fuzz_scores.index(max(ans_fuzz_scores)) + 1
-    return str(ans_index) + '. ' + ans
+    return matchOption(ans, options)
 
 def matchOption(text, options):
     ans_fuzz_score = []
