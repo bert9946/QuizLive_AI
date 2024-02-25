@@ -117,9 +117,11 @@ def matchCorrentAnswer(image):
         return 4
     return -1
 
-def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=95, options_score_threshold=80):
-    with open(data_path, 'r', encoding='utf8') as file:
-        data = json.load(file)
+def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_threshold=95, options_score_threshold=80):
+    data = []
+    with open('data/data.jsonl', 'r', encoding='utf8') as file:
+        for line in file:
+            data.append(json.loads(line))
 
     question, options = splitQuestionAndOptions(text)
     options_str = ' '.join(options)

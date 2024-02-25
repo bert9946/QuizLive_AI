@@ -159,12 +159,9 @@ def main():
 
 			# save data
 			if args.test:
-				data_path = 'data/test.json'
+				data_path = 'data/test.jsonl'
 			else:
-				data_path = 'data/data.json'
-
-			with open(data_path, 'r', encoding='utf8') as file:
-				obj = json.load(file)
+				data_path = 'data/data.jsonl'
 
 			data = {
 				'image_path': image_path,
@@ -174,11 +171,10 @@ def main():
 				'real_ans': real_ans,
 				'execution_time': int(execution_time * 1000)
 			}
-			obj.append(data)
 
-			with open(data_path, 'w', encoding='utf8') as file:
-				json.dump(obj, file, indent=4, ensure_ascii=False)
-				file.write('\n')
+			with open(data_path, 'a') as jsonl_file:
+				jsonl_file.write(json.dumps(data, ensure_ascii=False) + '\n')
+
 
 if __name__ == '__main__':
 	main()

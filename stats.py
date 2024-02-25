@@ -24,8 +24,10 @@ def calculateAverageExecutionTime(data):
 
 
 def main():
-	with open('data/data.json', 'r', encoding='utf8') as file:
-		data = json.load(file)
+	data = []
+	with open('data/data.jsonl', 'r', encoding='utf8') as file:
+		for line in file:
+			data.append(json.loads(line))
 	accurate, total = calculateAccuracyStats(data)
 	print(f'Accuracy: {accurate}/{total} ({accurate/total*100:.2f}%)')
 	print(f'Average Execution Time: {calculateAverageExecutionTime(data):.2f} ms')
