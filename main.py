@@ -78,9 +78,9 @@ def main():
 
 			# Tap
 			try:
-				tap(ans_index)
+				tapOption(ans_index)
 			except ValueError:
-				tap(1)
+				tapOption(1)
 
 			# IMPORTANT: Print result
 			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
