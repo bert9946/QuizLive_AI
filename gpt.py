@@ -7,6 +7,8 @@ def Anwser(text):
     messages=[
       {"role": "system", "content": "根據問題，回答最可能的答案。（只要回答選項文字。）"},
       {"role": "user", "content": text}
-    ]
+    ],
+    timeout=5
+
   )
   return completion.choices[0].message.content
