@@ -144,12 +144,6 @@ def main():
 
 			if args.speech: speak(ans_text)
 
-			# save data
-			if not args.test:
-				data_path = 'data/data.json'
-			else:
-				data_path = 'data/test.json'
-
 			print('正確答案：..', end='\r', flush=True)
 			while True:
 				image = wincap.get_image_from_window()
@@ -162,6 +156,12 @@ def main():
 					print('正確答案：', colored(real_ans, real_ans_color))
 					break
 			print('====================')
+
+			# save data
+			if args.test:
+				data_path = 'data/test.json'
+			else:
+				data_path = 'data/data.json'
 
 			with open(data_path, 'r', encoding='utf8') as file:
 				obj = json.load(file)
