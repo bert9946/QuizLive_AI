@@ -150,15 +150,16 @@ def main():
 			else:
 				data_path = 'data/test.json'
 
-			# while time.time() - end_time < 1:
+			print('正確答案：..', end='\r', flush=True)
 			while True:
 				image = wincap.get_image_from_window()
 				real_ans = matchCorrentAnswer(image)
 				if real_ans != -1:
 					if int(ans_index) == real_ans:
-						print('正確答案：', colored(real_ans, 'green'))
+						real_ans_color = 'green'
 					else:
-						print('正確答案：', colored(real_ans, 'red'))
+						real_ans_color = 'red'
+					print('正確答案：', colored(real_ans, real_ans_color))
 					break
 			print('====================')
 
