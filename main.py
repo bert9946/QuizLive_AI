@@ -11,13 +11,14 @@ import crop
 import gpt
 import src.ocr as ocr
 from src.util import *
-from adb import tap
+from adb import *
 
 
 def main():
 	parser = argparse.ArgumentParser(description='Quiz Live AI')
 	parser.add_argument('--test', action='store_true', help="won't save data to file")
 	parser.add_argument('--speech', action='store_true', help="speak the answer out load")
+	parser.add_argument('--continuous', action='store_true', help="continuous mode")
 
 	args = parser.parse_args()
 
@@ -34,6 +35,43 @@ def main():
 
 		# Capture image
 		image = wincap.get_image_from_window()
+		
+
+		if args.continuous:
+			if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if button := matchImage('assets/dont_show_for_today.jpg', image):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if matchImage('assets/acquire.jpg', image, crop_coords=(40, 310, 270, 70)):
+				if button := matchImage('assets/confirm_2.jpg', image):
+					simulateTap(button[0], button[1])
+					time.sleep(1)
+			if button := matchImage('assets/level_up.jpg', image, crop_coords=(190, 660, 360, 140)):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if button := matchImage('assets/master_beaten.jpg', image, crop_coords=(240, 1300, 250, 70)):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if button := matchImage('assets/circle_2.jpg', image, mask_image_path='assets/circle_mask_2.jpg', crop_coords=(90, 370, 554, 907), threshold=0.65):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+			if matchImage('assets/hint.jpg', image, crop_coords=(327, 505, 77, 45)):
+				if button := matchImage('assets/close.jpg', image, crop_coords=(560, 506, 27, 24)):
+					simulateTap(button[0], button[1])
+					time.sleep(1)
+			if matchImage('assets/trophy.jpg', image, crop_coords=(460, 640, 70, 60)):
+				if button := matchImage('assets/confirm_3.jpg', image, crop_coords=(440, 945, 110, 40)):
+					simulateTap(button[0], button[1])
+					time.sleep(1)
+			if button := matchImage('assets/stage_completed.jpg', image, crop_coords=(160, 680, 420, 120)):
+				simulateTap(button[0], button[1])
+				time.sleep(1)
+
 
 		if not is_triggered(image):
 			print(colored('waiting', 'dark_grey'), end='\r', flush=True)

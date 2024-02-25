@@ -1,6 +1,9 @@
 import subprocess
 import json
 from thefuzz import fuzz
+import cv2 as cv
+
+from adb import simulateTap
 
 def getWindowId():
 	command = ['osascript', '-e', 'tell app "QuickTime Player" to id of window 1']
@@ -114,14 +117,6 @@ def matchCorrentAnswer(image):
         return 4
     return -1
 
-def matchQuestionFromDatabase(text):
-    with open('data/data.json', 'r', encoding='utf8') as file:
-        data = json.load(file)
-
-    for item in data:
-        if item['question'] == text:
-            return item['real_ans']
-
 def matchQuestionFromDatabase(text, data_path='data/data.json', question_score_threshold=95, options_score_threshold=80):
     with open(data_path, 'r', encoding='utf8') as file:
         data = json.load(file)
@@ -159,3 +154,22 @@ def matchOption(text, options):
         ans_fuzz_score.append(fuzz.ratio(text, option))
     ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
     return ans_index
+
+
+def matchImage(neddle_image_path, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
+    button_image = cv.imread(neddle_image_path, cv.IMREAD_GRAYSCALE)
+    if mask_image_path:
+        mask_image = cv.imread(mask_image_path, cv.IMREAD_GRAYSCALE)
+    else:
+        mask_image = None
+    if crop_coords:
+        x, y, w, h = crop_coords
+        haystack_image = haystack_image[y:y+h, x:x+w]
+    else: x, y = 0, 0
+    haystack_image = cv.cvtColor(haystack_image, cv.COLOR_BGR2GRAY)
+    result = cv.matchTemplate(haystack_image, button_image, cv.TM_CCOEFF_NORMED, mask=mask_image)
+    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+    button_w, button_h = button_image.shape[:2][::-1]
+    if max_val >= threshold:
+        return max_loc[0] * 2 + button_w + x * 2, max_loc[1] * 2 + button_h + y * 2
+    return None
