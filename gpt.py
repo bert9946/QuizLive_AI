@@ -5,7 +5,7 @@ def Anwser(text):
   completion = client.chat.completions.create(
     model="gpt-3.5-turbo-0125",
     messages=[
-      {"role": "system", "content": "根據問題，回答最可能的答案。（只要回答選項文字，如：（選項一）。）"},
+      {"role": "system", "content": "根據問題，回答最可能的答案。（只要回答選項文字。）"},
       {"role": "user", "content": text}
     ]
   )
