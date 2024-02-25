@@ -21,12 +21,11 @@ def main():
 
 	args = parser.parse_args()
 
-	# window_name = '未命名.mov'
 	window_name = 'Android'
 
 	wincap = WindowCapture(window_name)
 
-	input("請按下 Enter 鍵繼續...")
+	# input("請按下 Enter 鍵繼續...")
 	while True:
 		if args.test:
 			image_path = 'tmp/test_0.jpg'
