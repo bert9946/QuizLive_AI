@@ -1,3 +1,5 @@
+# from https://yasoob.me/posts/how-to-use-vision-framework-via-pyobjc/
+#   and https://github.com/RhetTbull/osxphotos/blob/main/osxphotos/text_detection.py
 import Quartz
 from Foundation import NSURL
 import Vision
