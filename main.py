@@ -9,7 +9,7 @@ import cv2 as cv
 from windowcapture import WindowCapture
 import crop
 import gpt
-import src.ocr as ocr
+from src.ocr import detect_text
 from src.util import *
 from adb import *
 
@@ -104,7 +104,8 @@ def main():
 			cv.imwrite(image_path, cropped_image)
 
 			# OCR
-			text = ocr.ocr(image_path)
+			result = detect_text(image_path)
+			text = '\n'.join([i[0] for i in result])
 			ocr_time = time.time()
 
 			question, options = splitQuestionAndOptions(text)
