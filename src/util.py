@@ -157,8 +157,8 @@ def matchOption(text, options):
     return ans_index
 
 
-def matchImage(neddle_image_path, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
-    button_image = cv.imread(neddle_image_path, cv.IMREAD_GRAYSCALE)
+def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
+    needle_image = cv.imread(needle_image_path, cv.IMREAD_GRAYSCALE)
     if mask_image_path:
         mask_image = cv.imread(mask_image_path, cv.IMREAD_GRAYSCALE)
     else:
@@ -168,9 +168,10 @@ def matchImage(neddle_image_path, haystack_image, mask_image_path=None, crop_coo
         haystack_image = haystack_image[y:y+h, x:x+w]
     else: x, y = 0, 0
     haystack_image = cv.cvtColor(haystack_image, cv.COLOR_BGR2GRAY)
-    result = cv.matchTemplate(haystack_image, button_image, cv.TM_CCOEFF_NORMED, mask=mask_image)
+    result = cv.matchTemplate(haystack_image, needle_image, cv.TM_CCOEFF_NORMED, mask=mask_image)
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-    button_w, button_h = button_image.shape[:2][::-1]
+    button_w, button_h = needle_image.shape[:2][::-1]
     if max_val >= threshold:
+        print('fonud ' + needle_image_path)
         return max_loc[0] * 2 + button_w + x * 2, max_loc[1] * 2 + button_h + y * 2
     return None
