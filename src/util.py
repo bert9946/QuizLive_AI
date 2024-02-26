@@ -165,9 +165,23 @@ def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coo
         mask_image = None
     if crop_coords:
         x, y, w, h = crop_coords
+        # if w > haystack_image.shape[1] or h > haystack_image.shape[0]:
+        #     return None
         haystack_image = haystack_image[y:y+h, x:x+w]
     else: x, y = 0, 0
+
+    if needle_image is None:
+        return None
+    if haystack_image is None:
+        return None
+
+    for length in haystack_image.shape[:2]:
+        if length == 0:
+            return None
     haystack_image = cv.cvtColor(haystack_image, cv.COLOR_BGR2GRAY)
+
+    if needle_image.shape[0] > haystack_image.shape[0] or needle_image.shape[1] > haystack_image.shape[1]:
+        return None
     result = cv.matchTemplate(haystack_image, needle_image, cv.TM_CCOEFF_NORMED, mask=mask_image)
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
     button_w, button_h = needle_image.shape[:2][::-1]
