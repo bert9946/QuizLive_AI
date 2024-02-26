@@ -5,10 +5,6 @@ import cv2 as cv
 
 from adb import simulateTap
 
-def getWindowId():
-    command = ['osascript', '-e', 'tell app "QuickTime Player" to id of window 1']
-    process = subprocess.run(command, capture_output=True, text=True)
-    return int(process.stdout)
 
 def captureWindow(image_path='tmp/test.jpg', window_id=None):
     capture_command = ['screencapture', '-o', f'-l{window_id}', image_path]
@@ -23,14 +19,6 @@ def splitQuestionAndOptions(text):
     options = lines[-4:]
 
     return question, options
-
-    # question = ''
-    # lines = text.split('\n')
-    # for line in lines:
-    #     question += line.strip()
-    #     if line.strip().endswith('？'):
-    #         options = lines[lines.index(line) + 1:][:4]
-    #         return question, options
 
 def json_to_jsonl(input_path, output_path):
     with open(input_path, 'r') as json_file:
@@ -74,10 +62,6 @@ def is_pixel_color_tolerance(pixel, color, tolerance=10):
     return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))
 
 def is_triggered(image):
-
-    # quicktime player
-    # trigger_pixel_1 = 466, 140
-    # trigger_pixel_2 = 520, 580
 
     # android emulator Pixel 7 pro
     trigger_pixel_1 = 390, 124
