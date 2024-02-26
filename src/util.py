@@ -100,8 +100,13 @@ def is_triggered(image):
 def matchCorrentAnswer(image):
     x = 170
     y = 920
-
     delat_y = 155
+
+    if image.shape[0] < y + delat_y * 3:
+        return -1
+    if image.shape[1] < x:
+        return -1
+
 
     target_color = (141, 168, 26)
     tolerance = 50
@@ -165,8 +170,6 @@ def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coo
         mask_image = None
     if crop_coords:
         x, y, w, h = crop_coords
-        # if w > haystack_image.shape[1] or h > haystack_image.shape[0]:
-        #     return None
         haystack_image = haystack_image[y:y+h, x:x+w]
     else: x, y = 0, 0
 
