@@ -10,6 +10,10 @@ def captureWindow(image_path='tmp/test.jpg', window_id=None):
     capture_command = ['screencapture', '-o', f'-l{window_id}', image_path]
     subprocess.run(capture_command)
 
+def crop_image(image):
+	h, w = image.shape[:2]
+	return image[int(h*.3):int(h*.9), int(w*0.17):int(w*0.84)]
+
 def calculateExecutionTime(start_time, end_time):
     return int((end_time - start_time) * 1000)
 

@@ -7,7 +7,6 @@ import cv2 as cv
 
 
 from windowcapture import WindowCapture
-import crop
 import gpt
 from src.ocr import detect_text
 from src.util import *
@@ -96,7 +95,7 @@ def main():
 			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
 
 			# Crop
-			cropped_image = crop.crop_image(image)
+			cropped_image = crop_image(image)
 			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
 			capturing_time = time.time()
 
