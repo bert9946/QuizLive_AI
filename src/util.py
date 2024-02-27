@@ -177,6 +177,5 @@ def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coo
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
     button_w, button_h = needle_image.shape[:2][::-1]
     if max_val >= threshold:
-        print('fonud ' + needle_image_path)
         return max_loc[0] * 2 + button_w + x * 2, max_loc[1] * 2 + button_h + y * 2
     return None
