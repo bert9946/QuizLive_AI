@@ -11,6 +11,7 @@ import gpt
 from src.ocr import detect_text
 from src.util import *
 from adb import *
+from dashboard import Dashboard
 
 
 def main():
@@ -24,63 +25,78 @@ def main():
 	args = parser.parse_args()
 
 	window_name = 'Android'
-
 	wincap = WindowCapture(window_name)
 
-	# input("請按下 Enter 鍵繼續...")
+	dashboard = Dashboard()
+
+	isInMatch = False
+	x = 0
+
 	while True:
 		if args.test:
 			image_path = 'tmp/test_0.jpg'
 		else:
-			image_path = 'data/images/' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S") + '.jpg'
+			time_stamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+			image_path = 'data/images/' + time_stamp + '.jpg'
 
 		# Capture image
 		image = wincap.get_image_from_window()
-		
+
+		# Check if in match
+		if matchImage('assets/display_name.jpg', image, crop_coords=(75, 270, 105, 45)):
+			isInMatch = True
+			x = 0
+		else:
+			x += 1
+			if x > 100:
+				isInMatch = False
+				dashboard.cleanRecords()
+			
 
 		if args.continuous:
-			if button := matchImage('assets/Find_new_opponent.jpg', image, crop_coords=(87, 1326, 130, 40)):
-				simulateTap(button[0], button[1])
-				time.sleep(1)
-			if matchImage('assets/acquire.jpg', image, crop_coords=(40, 310, 270, 70)):
-				if button := matchImage('assets/confirm_2.jpg', image):
+			if not isInMatch:
+				if button := matchImage('assets/Find_new_opponent.jpg', image, crop_coords=(87, 1326, 130, 40)):
 					simulateTap(button[0], button[1])
 					time.sleep(1)
-			if button := matchImage('assets/level_up.jpg', image, crop_coords=(190, 660, 360, 140)):
-				simulateTap(button[0], button[1])
-				time.sleep(1)
+				if matchImage('assets/acquire.jpg', image, crop_coords=(40, 310, 270, 70)):
+					if button := matchImage('assets/confirm_2.jpg', image):
+						simulateTap(button[0], button[1])
+						time.sleep(1)
+				if button := matchImage('assets/level_up.jpg', image, crop_coords=(190, 660, 360, 140)):
+					simulateTap(button[0], button[1])
+					time.sleep(1)
 
-			if args.stage_master:
-				if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if matchImage('assets/free_trial.jpg', image, crop_coords=(290, 507, 150, 40)):
-					if button := matchImage('assets/dont_show_for_today.jpg', image, crop_coords=(60, 1440, 200, 40)):
-						simulateTap(button[0], button[1])
-						time.sleep(2)
-				if button := matchImage('assets/confirm_4.jpg', image, crop_coords=(420, 850, 150, 50)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if button := matchImage('assets/master_beaten.jpg', image, crop_coords=(240, 1300, 250, 70)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if button := matchImage('assets/circle_2.jpg', image, mask_image_path='assets/circle_mask_2.jpg', crop_coords=(90, 370, 554, 907), threshold=0.65):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if matchImage('assets/hint.jpg', image, crop_coords=(327, 505, 77, 45)):
-					if button := matchImage('assets/close.jpg', image, crop_coords=(560, 506, 27, 24)):
+				if args.stage_master:
+					if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
 						simulateTap(button[0], button[1])
 						time.sleep(1)
-				if matchImage('assets/trophy.jpg', image, crop_coords=(460, 640, 70, 60)):
-					if button := matchImage('assets/confirm_3.jpg', image, crop_coords=(440, 945, 110, 40)):
+					if matchImage('assets/free_trial.jpg', image, crop_coords=(290, 507, 150, 40)):
+						if button := matchImage('assets/dont_show_for_today.jpg', image, crop_coords=(60, 1440, 200, 40)):
+							simulateTap(button[0], button[1])
+							time.sleep(2)
+					if button := matchImage('assets/confirm_4.jpg', image, crop_coords=(420, 850, 150, 50)):
 						simulateTap(button[0], button[1])
 						time.sleep(1)
-				if button := matchImage('assets/stage_completed.jpg', image, crop_coords=(160, 680, 420, 120)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
+					if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
+						simulateTap(button[0], button[1])
+						time.sleep(1)
+					if button := matchImage('assets/master_beaten.jpg', image, crop_coords=(240, 1300, 250, 70)):
+						simulateTap(button[0], button[1])
+						time.sleep(1)
+					if button := matchImage('assets/circle_2.jpg', image, mask_image_path='assets/circle_mask_2.jpg', crop_coords=(90, 370, 554, 907), threshold=0.65):
+						simulateTap(button[0], button[1])
+						time.sleep(1)
+					if matchImage('assets/hint.jpg', image, crop_coords=(327, 505, 77, 45)):
+						if button := matchImage('assets/close.jpg', image, crop_coords=(560, 506, 27, 24)):
+							simulateTap(button[0], button[1])
+							time.sleep(1)
+					if matchImage('assets/trophy.jpg', image, crop_coords=(460, 640, 70, 60)):
+						if button := matchImage('assets/confirm_3.jpg', image, crop_coords=(440, 945, 110, 40)):
+							simulateTap(button[0], button[1])
+							time.sleep(1)
+					if button := matchImage('assets/stage_completed.jpg', image, crop_coords=(160, 680, 420, 120)):
+						simulateTap(button[0], button[1])
+						time.sleep(1)
 
 
 		if not is_triggered(image):
@@ -155,11 +171,14 @@ def main():
 				if real_ans != -1:
 					if int(ans_index) == real_ans:
 						real_ans_color = 'green'
+						dashboard.addRecord(True, ans_source)
 					else:
 						real_ans_color = 'red'
+						dashboard.addRecord(False, ans_source)
 					print('正確答案：', colored(real_ans, real_ans_color))
 					break
 			print('====================')
+			dashboard.printRecords()
 
 			# save data
 			if args.test:
