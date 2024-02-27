@@ -58,9 +58,9 @@ def main():
 					if button := matchImage('assets/dont_show_for_today.jpg', image, crop_coords=(60, 1440, 200, 40)):
 						simulateTap(button[0], button[1])
 						time.sleep(2)
-						if button := matchImage('assets/confirm_4.jpg', image, threshold=0.7):
-							simulateTap(button[0], button[1])
-							time.sleep(1)
+				if button := matchImage('assets/confirm_4.jpg', image, crop_coords=(420, 850, 150, 50)):
+					simulateTap(button[0], button[1])
+					time.sleep(1)
 				if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
 					simulateTap(button[0], button[1])
 					time.sleep(1)
