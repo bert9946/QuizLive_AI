@@ -111,7 +111,7 @@ def matchCorrentAnswer(image):
 
 def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_threshold=95, options_score_threshold=80):
     data = []
-    with open('data/data.jsonl', 'r', encoding='utf8') as file:
+    with open(data_path, 'r', encoding='utf8') as file:
         for line in file:
             data.append(json.loads(line))
 
