@@ -120,7 +120,7 @@ def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_
 
     candidates = []
     for item in data:
-        if item['real_ans'] in [1, 2, 3, 4]:
+        if item['real_ans'] in [1, 2, 3, 4] and len(item['options']) == 4: # guard
             if (question_score := fuzz.ratio(question, item['question'])) > question_score_threshold:
                 if (options_score := fuzz.token_sort_ratio(options_str, ' '.join(item['options']))) > options_score_threshold:
                     item['question_score'] = question_score
@@ -134,12 +134,9 @@ def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_
     question_options_score = []
     for candidate in candidates:
         question_options_score.append(candidate['question_score'] + candidate['options_score'])
+
     max_score_index = question_options_score.index(max(question_options_score))
-
     target = candidates[max_score_index]
-
-    if len(target['options']) != 4:
-        return None
 
     # find the option with the highest score
     ans = target['options'][int(target['real_ans'])-1]
