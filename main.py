@@ -113,12 +113,12 @@ def main():
 
 			# Crop
 			cropped_image = crop_image(image)
-			# cropped_image = cv.cvtColor(cropped_image, cv.COLOR_BGR2GRAY)
+			cropped_image = cv.cvtColor(cropped_image, cv.COLOR_BGR2GRAY)
 			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
 			capturing_time = time.time()
 
 			# save image
-			# cv.imwrite(image_path, cropped_image)
+			cv.imwrite(image_path, cropped_image)
 
 			# OCR
 			text = image2text(cropped_image)
