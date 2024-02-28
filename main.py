@@ -135,7 +135,7 @@ def main():
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
 			else: # GPT
-				ans_text = gpt.Anwser(text)
+				ans_text = gpt.Answer(text)
 				ans_index = matchOption(ans_text, options)
 				ans_color = 'yellow'
 				ans_source = 'GPT'
