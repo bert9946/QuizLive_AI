@@ -49,7 +49,7 @@ def main():
 			x = 0
 		else:
 			x += 1
-			if x > 100:
+			if x > 120:
 				isInMatch = False
 				dashboard.cleanRecords()
 			
