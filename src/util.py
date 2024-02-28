@@ -138,6 +138,9 @@ def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_
 
     target = candidates[max_score_index]
 
+    if len(target['options']) != 4:
+        return None
+
     # find the option with the highest score
     ans = target['options'][int(target['real_ans'])-1]
     return matchOption(ans, options)
