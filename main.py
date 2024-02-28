@@ -8,10 +8,11 @@ import cv2 as cv
 
 from windowcapture import WindowCapture
 import gpt
-from src.ocr import detect_text
+# from src.ocr import detect_text
 from src.util import *
 from adb import *
 from dashboard import Dashboard
+from src.ocr import image2text
 
 
 def main():
@@ -112,15 +113,15 @@ def main():
 
 			# Crop
 			cropped_image = crop_image(image)
+			# cropped_image = cv.cvtColor(cropped_image, cv.COLOR_BGR2GRAY)
 			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
 			capturing_time = time.time()
 
 			# save image
-			cv.imwrite(image_path, cropped_image)
+			# cv.imwrite(image_path, cropped_image)
 
 			# OCR
-			result = detect_text(image_path)
-			text = '\n'.join([i[0] for i in result])
+			text = image2text(cropped_image)
 			ocr_time = time.time()
 
 			question, options = splitQuestionAndOptions(text)

@@ -1,8 +1,11 @@
-# from https://yasoob.me/posts/how-to-use-vision-framework-via-pyobjc/
-#   and https://github.com/RhetTbull/osxphotos/blob/main/osxphotos/text_detection.py
-import Quartz
-from Foundation import NSURL
+import io
+import numpy as np
+from PIL import Image
+
 import Vision
+from Quartz import CIImage
+from AppKit import NSBitmapImageRep, NSImage
+from Foundation import NSData
 
 
 def make_request_handler(results):
@@ -21,18 +24,14 @@ def make_request_handler(results):
 
     return handler
 
-def detect_text(img_path: str):
-    # Get the CIImage on which to perform requests.
-    input_url = NSURL.fileURLWithPath_(img_path)
-    input_image = Quartz.CIImage.imageWithContentsOfURL_(input_url)
+def detect_text(ci_image):
 
     # Create a new image-request handler.
     request_handler = Vision.VNImageRequestHandler.alloc().initWithCIImage_options_(
-        input_image, None
+        ci_image, None
     )
     results = []
     handler = make_request_handler(results)
-
 
     # Create a new request to recognize text.
     request = Vision.VNRecognizeTextRequest.alloc().initWithCompletionHandler_(handler)
@@ -45,3 +44,30 @@ def detect_text(img_path: str):
     error = request_handler.performRequests_error_([request], None)
 
     return results
+
+
+"""Create a CIImage from a numpy array"""
+"""from: https://gist.github.com/RhetTbull/1c34fc07c95733642cffcd1ac587fc4c?permalink_comment_id=4945454#gistcomment-4945454"""
+
+def createNSImageFromNumpyArray(numpy_array):
+    image = Image.fromarray(numpy_array)
+    data = io.BytesIO()
+    image.save(data, "JPEG")
+    nsdata = NSData.dataWithBytes_length_(data.getvalue(), len(data.getvalue()))
+    rep = NSBitmapImageRep.imageRepWithData_(nsdata)
+    nsimage = NSImage.alloc().initWithSize_((rep.pixelsWide(), rep.pixelsHigh()))
+    nsimage.addRepresentation_(rep)
+    return nsimage
+
+def convertNSImageToCIImage(nsimage):
+    imageData = nsimage.TIFFRepresentation()
+    bitmap = NSBitmapImageRep.alloc().initWithData_(imageData)
+    ciimage = CIImage.alloc().initWithBitmapImageRep_(bitmap)
+    return ciimage
+
+def image2text(numpy_array: np.ndarray) -> str:
+    nsi = createNSImageFromNumpyArray(numpy_array)
+    cii = convertNSImageToCIImage(nsi)
+    results = detect_text(cii)
+    text = '\n'.join([i[0] for i in results])
+    return text
