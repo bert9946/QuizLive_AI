@@ -120,9 +120,6 @@ def main():
 			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
 			capturing_time = time.time()
 
-			# save image
-			cv.imwrite(image_path, cropped_image)
-
 			# OCR
 			text = image2text(cropped_image)
 			ocr_time = time.time()
@@ -197,6 +194,9 @@ def main():
 				data_path = 'data/test.jsonl'
 			else:
 				data_path = 'data/data.jsonl'
+
+			# save image
+			cv.imwrite(image_path, cropped_image)
 
 			item = {
 				'image_path': image_path,
