@@ -6,6 +6,7 @@ def Answer(text):
     model="gpt-3.5-turbo-0125",
     messages=[
       {"role": "system", "content": "根據問題，回答最可能的答案。（只要回答選項文字。）"},
+      # {"role": "system", "content": "根據問題，簡短地說明原因，然後回答答案。"},
       {"role": "user", "content": text}
     ],
     timeout=5

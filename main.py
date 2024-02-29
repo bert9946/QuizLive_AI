@@ -8,11 +8,11 @@ import cv2 as cv
 
 from windowcapture import WindowCapture
 import gpt
-# from src.ocr import detect_text
+from gemini import Gemini
+from src.ocr import image2text
 from src.util import *
 from adb import *
 from dashboard import Dashboard
-from src.ocr import image2text
 
 
 def main():
@@ -21,6 +21,7 @@ def main():
 	parser.add_argument('--speech', action='store_true', help="speak the answer out load")
 	parser.add_argument('-c', '--continuous', action='store_true', help="continuous mode")
 	parser.add_argument('--stage-master', action='store_true', help="match stage master")
+	parser.add_argument("--llm", help="language model to use", dest="llm", default="gpt")
 
 
 	args = parser.parse_args()
@@ -29,6 +30,7 @@ def main():
 	wincap = WindowCapture(window_name)
 
 	dashboard = Dashboard()
+	gemini = Gemini()
 
 	isInMatch = False
 	x = 0
@@ -52,7 +54,6 @@ def main():
 			if x > 120:
 				isInMatch = False
 				dashboard.cleanRecords()
-			
 
 		if args.continuous:
 			if not isInMatch:
@@ -136,11 +137,19 @@ def main():
 				ans_color = 'blue'
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
-			else: # GPT
-				ans_text = gpt.Answer(text)
+			else: # LLM
+				if args.llm == 'gpt':
+					ans_text = gpt.Answer(text)
+					ans_color = 'yellow'
+					ans_source = 'GPT'
+				elif args.llm == 'gemini':
+					try:
+						ans_text = gemini.Answer(text)
+					except Exception:
+						ans_text = 'None'
+					ans_color = 'yellow'
+					ans_source = 'Gemini'
 				ans_index = matchOption(ans_text, options)
-				ans_color = 'yellow'
-				ans_source = 'GPT'
 			ans = str(ans_index) + '. ' + ans_text
 
 			# Tap
@@ -156,8 +165,8 @@ def main():
 
 			print(colored(f'截圖時間：{calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
 			print(colored(f'OCR 時間：{calculateExecutionTime(capturing_time, ocr_time)} 毫秒', 'dark_grey'))
-			if ans_source == 'GPT':
-				print(colored(f'GPT 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
+			if ans_source in ['GPT', 'Gemini']:
+				print(colored(f'LLM 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
 			elif ans_source == 'database':
 				print(colored(f'比對時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
 
@@ -194,6 +203,7 @@ def main():
 				'question': question,
 				'options': options,
 				'ans': ans,
+				'ans_source': ans_source,
 				'real_ans': real_ans,
 				'execution_time': int(execution_time * 1000)
 			}
