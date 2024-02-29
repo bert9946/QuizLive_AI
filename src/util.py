@@ -115,6 +115,8 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
                     item['question_score'] = question_score
                     item['options_score'] = options_score
                     candidates.append(item)
+                    if question_score == 100 and options_score == 100:
+                        break
 
     if candidates == []:
         return None
