@@ -152,9 +152,8 @@ def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coo
         haystack_image = haystack_image[y:y+h, x:x+w]
     else: x, y = 0, 0
 
-    haystack_image = cv.cvtColor(haystack_image, cv.COLOR_BGR2GRAY)
-
     try:
+        haystack_image = cv.cvtColor(haystack_image, cv.COLOR_BGR2GRAY)
         result = cv.matchTemplate(haystack_image, needle_image, cv.TM_CCOEFF_NORMED, mask=mask_image)
     except cv.error:
         return None
