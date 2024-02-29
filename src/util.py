@@ -95,25 +95,17 @@ def matchCorrentAnswer(image):
     if image.shape[1] < x:
         return -1
 
-
     target_color = (141, 168, 26)
     tolerance = 50
 
-    if is_pixel_color_tolerance(image[y, x], target_color, tolerance):
-        return 1
-    if is_pixel_color_tolerance(image[y + delat_y, x], target_color, tolerance):
-        return 2
-    if is_pixel_color_tolerance(image[y + delat_y * 2, x], target_color, tolerance):
-        return 3
-    if is_pixel_color_tolerance(image[y + delat_y * 3, x], target_color, tolerance):
-        return 4
+    for i in range(4):
+        if is_pixel_color_tolerance(image[y + delat_y * i, x], target_color, tolerance):
+            return i + 1
     return -1
 
 def matchQuestionFromDatabase(text, data_path='data/data.jsonl', question_score_threshold=95, options_score_threshold=80):
-    data = []
     with open(data_path, 'r', encoding='utf8') as file:
-        for line in file:
-            data.append(json.loads(line))
+        data = [json.loads(line) for line in file]
 
     question, options = splitQuestionAndOptions(text)
     options_str = ' '.join(options)
