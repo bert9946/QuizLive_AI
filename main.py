@@ -104,6 +104,8 @@ def main():
 			print(colored('waiting', 'dark_grey'), end='\r', flush=True)
 		else:
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
+			with open('data/data.jsonl', 'r', encoding='utf8') as file:
+				data = [json.loads(line) for line in file]
 			time.sleep(3.25)
 
 			start_time = time.time()
@@ -130,7 +132,7 @@ def main():
 				print(colored(option, 'light_grey'))
 
 			# Match question from database
-			if ans_index := matchQuestionFromDatabase(text):
+			if ans_index := matchQuestionFromDatabase(text, data):
 				ans_color = 'blue'
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
@@ -187,7 +189,7 @@ def main():
 			else:
 				data_path = 'data/data.jsonl'
 
-			data = {
+			item = {
 				'image_path': image_path,
 				'question': question,
 				'options': options,
@@ -197,7 +199,7 @@ def main():
 			}
 
 			with open(data_path, 'a') as jsonl_file:
-				jsonl_file.write(json.dumps(data, ensure_ascii=False) + '\n')
+				jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
 
 
 if __name__ == '__main__':
