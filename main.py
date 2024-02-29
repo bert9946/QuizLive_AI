@@ -23,7 +23,6 @@ def main():
 	parser.add_argument('--stage-master', action='store_true', help="match stage master")
 	parser.add_argument("--llm", help="language model to use", dest="llm", default="gpt")
 
-
 	args = parser.parse_args()
 
 	window_name = 'Android'
@@ -64,48 +63,39 @@ def main():
 			if not isInMatch:
 				for template in templates:
 					if button := matchImage(template, image):
-				if button := matchImage('assets/Find_new_opponent.jpg', image, crop_coords=(87, 1326, 130, 40)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
-				if matchImage('assets/acquire.jpg', image, crop_coords=(40, 310, 270, 70)):
-					if button := matchImage('assets/confirm_2.jpg', image):
-						simulateTap(button[0], button[1])
-						time.sleep(1)
-				if button := matchImage('assets/level_up.jpg', image, crop_coords=(190, 660, 360, 140)):
-					simulateTap(button[0], button[1])
-					time.sleep(1)
+						simulateTap(button)
 						time.sleep(1)
 
 				if args.stage_master:
 					if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 					if matchImage('assets/free_trial.jpg', image, crop_coords=(290, 507, 150, 40)):
 						if button := matchImage('assets/dont_show_for_today.jpg', image, crop_coords=(60, 1440, 200, 40)):
-							simulateTap(button[0], button[1])
+							simulateTap(button)
 							time.sleep(2)
 					if button := matchImage('assets/confirm_4.jpg', image, crop_coords=(420, 850, 150, 50)):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 					if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 					if button := matchImage('assets/master_beaten.jpg', image, crop_coords=(240, 1300, 250, 70)):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 					if button := matchImage('assets/circle_2.jpg', image, mask_image_path='assets/circle_mask_2.jpg', crop_coords=(90, 370, 554, 907), threshold=0.65):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 					if matchImage('assets/hint.jpg', image, crop_coords=(327, 505, 77, 45)):
 						if button := matchImage('assets/close.jpg', image, crop_coords=(560, 506, 27, 24)):
-							simulateTap(button[0], button[1])
+							simulateTap(button)
 							time.sleep(1)
 					if matchImage('assets/trophy.jpg', image, crop_coords=(460, 640, 70, 60)):
 						if button := matchImage('assets/confirm_3.jpg', image, crop_coords=(440, 945, 110, 40)):
-							simulateTap(button[0], button[1])
+							simulateTap(button)
 							time.sleep(1)
 					if button := matchImage('assets/stage_completed.jpg', image, crop_coords=(160, 680, 420, 120)):
-						simulateTap(button[0], button[1])
+						simulateTap(button)
 						time.sleep(1)
 
 
@@ -158,10 +148,8 @@ def main():
 			ans = str(ans_index) + '. ' + ans_text
 
 			# Tap
-			try:
-				tapOption(ans_index)
-			except ValueError:
-				tapOption(1)
+			try: tapOption(ans_index)
+			except ValueError: tapOption(1)
 
 			# IMPORTANT: Print result
 			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
