@@ -141,8 +141,7 @@ def matchOption(text, options):
     return ans_index
 
 
-def matchImage(needle_image_path, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
-    needle_image = cv.imread(needle_image_path, cv.IMREAD_GRAYSCALE)
+def matchImage(needle_image, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
     if mask_image_path:
         mask_image = cv.imread(mask_image_path, cv.IMREAD_GRAYSCALE)
     else:

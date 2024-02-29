@@ -34,6 +34,11 @@ def main():
 
 	isInMatch = False
 	x = 0
+	templates = []
+	templates.append(cv.imread('assets/Find_new_opponent.jpg', cv.IMREAD_GRAYSCALE))
+	templates.append(cv.imread('assets/confirm_2.jpg', cv.IMREAD_GRAYSCALE))
+	templates.append(cv.imread('assets/level_up.jpg', cv.IMREAD_GRAYSCALE))
+	display_name_image = cv.imread('assets/display_name.jpg', cv.IMREAD_GRAYSCALE)
 
 	while True:
 		if args.test:
@@ -46,7 +51,7 @@ def main():
 		image = wincap.get_image_from_window()
 
 		# Check if in match
-		if matchImage('assets/display_name.jpg', image, crop_coords=(75, 270, 105, 45)):
+		if matchImage(display_name_image, image, crop_coords=(75, 270, 105, 45)):
 			isInMatch = True
 			x = 0
 		else:
@@ -57,6 +62,8 @@ def main():
 
 		if args.continuous:
 			if not isInMatch:
+				for template in templates:
+					if button := matchImage(template, image):
 				if button := matchImage('assets/Find_new_opponent.jpg', image, crop_coords=(87, 1326, 130, 40)):
 					simulateTap(button[0], button[1])
 					time.sleep(1)
@@ -67,6 +74,7 @@ def main():
 				if button := matchImage('assets/level_up.jpg', image, crop_coords=(190, 660, 360, 140)):
 					simulateTap(button[0], button[1])
 					time.sleep(1)
+						time.sleep(1)
 
 				if args.stage_master:
 					if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
