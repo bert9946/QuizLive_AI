@@ -181,7 +181,7 @@ def main():
 					break
 				real_ans_index = matchCorrentAnswer(image)
 				if real_ans_index != -1:
-					if int(ans_index) == real_ans_index:
+					if ans_index == real_ans_index:
 						real_ans_color = 'green'
 						dashboard.addRecord(True, ans_source)
 					else:
