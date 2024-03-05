@@ -179,15 +179,15 @@ def main():
 				image = wincap.get_image_from_window()
 				if is_triggered(image):
 					break
-				real_ans = matchCorrentAnswer(image)
-				if real_ans != -1:
-					if int(ans_index) == real_ans:
+				real_ans_index = matchCorrentAnswer(image)
+				if real_ans_index != -1:
+					if int(ans_index) == real_ans_index:
 						real_ans_color = 'green'
 						dashboard.addRecord(True, ans_source)
 					else:
 						real_ans_color = 'red'
 						dashboard.addRecord(False, ans_source)
-					print('正確答案：', colored(real_ans, real_ans_color))
+					print('正確答案：', colored(real_ans_index, real_ans_color))
 					break
 			print('====================')
 			dashboard.printRecords()
@@ -202,7 +202,7 @@ def main():
 				'options': options,
 				'ans': ans,
 				'ans_source': ans_source,
-				'real_ans': real_ans,
+				'real_ans': real_ans_index,
 				'execution_time': int(execution_time * 1000)
 			}
 
