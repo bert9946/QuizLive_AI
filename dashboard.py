@@ -22,6 +22,12 @@ class Dashboard:
 			else:
 				print(colored('*', 'red', attrs=[attr]), end=' ')
 		print('\n')
+	def printRealAnswer(self, real_ans_index: int):
+		if self.records[-1].is_correct:
+			real_ans_color = 'green'
+		else:
+			real_ans_color = 'red'
+		print('正確答案：', colored(real_ans_index, real_ans_color))
 
 class record:
 	def __init__(self, is_correct, source):

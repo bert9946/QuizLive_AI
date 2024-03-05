@@ -181,13 +181,8 @@ def main():
 					break
 				real_ans_index = matchCorrentAnswer(image)
 				if real_ans_index != -1:
-					if ans_index == real_ans_index:
-						real_ans_color = 'green'
-						dashboard.addRecord(True, ans_source)
-					else:
-						real_ans_color = 'red'
-						dashboard.addRecord(False, ans_source)
-					print('正確答案：', colored(real_ans_index, real_ans_color))
+					dashboard.addRecord(ans_index == real_ans_index, ans_source)
+					dashboard.printRealAnswer(real_ans_index)
 					break
 			print('====================')
 			dashboard.printRecords()
