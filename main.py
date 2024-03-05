@@ -33,11 +33,17 @@ def main():
 
 	isInMatch = False
 	x = 0
+
 	templates = []
 	templates.append(cv.imread('assets/Find_new_opponent.jpg', cv.IMREAD_GRAYSCALE))
 	templates.append(cv.imread('assets/confirm_2.jpg', cv.IMREAD_GRAYSCALE))
 	templates.append(cv.imread('assets/level_up.jpg', cv.IMREAD_GRAYSCALE))
 	display_name_image = cv.imread('assets/display_name.jpg', cv.IMREAD_GRAYSCALE)
+
+	if args.test:
+		data_path = 'data/test.jsonl'
+	else:
+		data_path = 'data/data.jsonl'
 
 	while True:
 		if args.test:
@@ -133,16 +139,15 @@ def main():
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
 			else: # LLM
+				ans_color = 'yellow'
 				if args.llm == 'gpt':
 					ans_text = gpt.Answer(text)
-					ans_color = 'yellow'
 					ans_source = 'GPT'
 				elif args.llm == 'gemini':
 					try:
 						ans_text = gemini.Answer(text)
 					except Exception:
 						ans_text = 'None'
-					ans_color = 'yellow'
 					ans_source = 'Gemini'
 				ans_index = matchOption(ans_text, options)
 			ans = str(ans_index) + '. ' + ans_text
@@ -151,7 +156,7 @@ def main():
 			try: tapOption(ans_index)
 			except ValueError: tapOption(1)
 
-			# IMPORTANT: Print result
+			# Print answer
 			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
 			print(colored(f'from {ans_source}', 'dark_grey'))
 			end_time = time.time()
@@ -172,6 +177,8 @@ def main():
 			print('正確答案：..', end='\r', flush=True)
 			while True:
 				image = wincap.get_image_from_window()
+				if is_triggered(image):
+					break
 				real_ans = matchCorrentAnswer(image)
 				if real_ans != -1:
 					if int(ans_index) == real_ans:
@@ -185,15 +192,10 @@ def main():
 			print('====================')
 			dashboard.printRecords()
 
-			# save data
-			if args.test:
-				data_path = 'data/test.jsonl'
-			else:
-				data_path = 'data/data.jsonl'
-
-			# save image
+			# Save image
 			cv.imwrite(image_path, cropped_image)
 
+			# Save data
 			item = {
 				'image_path': image_path,
 				'question': question,
