@@ -133,7 +133,9 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
     ans = target['options'][int(target['real_ans'])-1]
     return matchOption(ans, options)
 
-def matchOption(text, options):
+def matchOption(text: str, options: list[str]) -> int:
+    if text == '' or options == []:
+        return -1
     ans_fuzz_score = []
     for option in options:
         ans_fuzz_score.append(fuzz.ratio(text, option))
