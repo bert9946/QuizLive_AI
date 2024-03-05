@@ -10,7 +10,7 @@ class Dashboard:
 	def addRecord(self, is_correct: bool, source):
 		self.records.append(record(is_correct, source))
 
-	def printRecords(self):
+	def printScore(self):
 		for record in self.records:
 			if record.source == 'database':
 				attr = 'underline'

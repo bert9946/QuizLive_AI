@@ -185,7 +185,7 @@ def main():
 					dashboard.printRealAnswer(real_ans_index)
 					break
 			print('====================')
-			dashboard.printRecords()
+			dashboard.printScore()
 
 			# Save image
 			cv.imwrite(image_path, cropped_image)
