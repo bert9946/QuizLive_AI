@@ -53,14 +53,6 @@ def modifyData(data):
     }
     return modified_data
 
-def speak(text, rate=225):
-    command = ['say', text, '--rate', str(rate)]
-    try:
-        process = subprocess.Popen(command)
-        process.communicate(timeout=1.5)
-    except subprocess.TimeoutExpired:
-        process.kill()
-
 # determine if a pixel is a given color with a tolerance
 def is_pixel_color_tolerance(pixel, color, tolerance=10):
     return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))

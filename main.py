@@ -18,7 +18,6 @@ from dashboard import Dashboard, Record, TimeStamp
 def main():
 	parser = argparse.ArgumentParser(description='Quiz Live AI')
 	parser.add_argument('--test', action='store_true', help="won't save data to file")
-	parser.add_argument('--speech', action='store_true', help="speak the answer out load")
 	parser.add_argument('-c', '--continuous', action='store_true', help="continuous mode")
 	parser.add_argument('--stage-master', action='store_true', help="match stage master")
 	parser.add_argument("--llm", help="language model to use", dest="llm", default="gpt")
@@ -167,8 +166,6 @@ def main():
 			dashboard.printAnswer()
 			dashboard.printSource()
 			dashboard.printTimes()
-
-			if args.speech: speak(ans_text)
 
 			print('正確答案：..', end='\r', flush=True)
 			while True:
