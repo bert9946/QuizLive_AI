@@ -12,7 +12,7 @@ from gemini import Gemini
 from src.ocr import image2text
 from src.util import *
 from adb import *
-from dashboard import Dashboard
+from dashboard import Dashboard, TimeStamp
 
 
 def main():
@@ -108,12 +108,13 @@ def main():
 		if not is_triggered(image):
 			print(colored('waiting', 'dark_grey'), end='\r', flush=True)
 		else:
+			time_stamps = []
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			with open('data/data.jsonl', 'r', encoding='utf8') as file:
 				data = [json.loads(line) for line in file]
 			time.sleep(3.25)
 
-			start_time = time.time()
+			time_stamps.append(TimeStamp('start_time'))
 
 			image = wincap.get_image_from_window()
 			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
@@ -122,11 +123,11 @@ def main():
 			cropped_image = crop_image(image)
 			cropped_image = cv.cvtColor(cropped_image, cv.COLOR_BGR2GRAY)
 			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
-			capturing_time = time.time()
+			time_stamps.append(TimeStamp('capturing_time'))
 
 			# OCR
 			text = image2text(cropped_image)
-			ocr_time = time.time()
+			time_stamps.append(TimeStamp('ocr_time'))
 
 			question, options = splitQuestionAndOptions(text)
 			print(colored(question, 'light_grey'))
@@ -159,18 +160,9 @@ def main():
 			# Print answer
 			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
 			print(colored(f'from {ans_source}', 'dark_grey'))
-			end_time = time.time()
+			time_stamps.append(TimeStamp('end_time'))
 
-			print(colored(f'截圖時間：{calculateExecutionTime(start_time, capturing_time)} 毫秒', 'dark_grey'))
-			print(colored(f'OCR 時間：{calculateExecutionTime(capturing_time, ocr_time)} 毫秒', 'dark_grey'))
-			if ans_source in ['GPT', 'Gemini']:
-				print(colored(f'LLM 時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
-			elif ans_source == 'database':
-				print(colored(f'比對時間：{calculateExecutionTime(ocr_time, end_time)} 毫秒', 'dark_grey'))
-
-			execution_time = end_time - start_time
-
-			print(colored(f'執行時間：{calculateExecutionTime(start_time, end_time)} 毫秒', 'dark_grey'))
+			dashboard.printTimes(time_stamps)
 
 			if args.speech: speak(ans_text)
 
@@ -198,7 +190,7 @@ def main():
 				'ans': ans,
 				'ans_source': ans_source,
 				'real_ans': real_ans_index,
-				'execution_time': int(execution_time * 1000)
+				'execution_time': calculateExecutionTime(time_stamps[0].value, time_stamps[-1].value)
 			}
 
 			with open(data_path, 'a') as jsonl_file:
