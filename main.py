@@ -12,7 +12,7 @@ from gemini import Gemini
 from src.ocr import image2text
 from src.util import *
 from adb import *
-from dashboard import Dashboard, TimeStamp
+from dashboard import Dashboard, Record, TimeStamp
 
 
 def main():
@@ -35,9 +35,9 @@ def main():
 	x = 0
 
 	templates = []
-	templates.append(cv.imread('assets/Find_new_opponent.jpg', cv.IMREAD_GRAYSCALE))
-	templates.append(cv.imread('assets/confirm_2.jpg', cv.IMREAD_GRAYSCALE))
-	templates.append(cv.imread('assets/level_up.jpg', cv.IMREAD_GRAYSCALE))
+	template_paths = ['assets/Find_new_opponent.jpg', 'assets/confirm_2.jpg', 'assets/level_up.jpg']
+	for template_path in template_paths:
+		templates.append(cv.imread(template_path, cv.IMREAD_GRAYSCALE))
 	display_name_image = cv.imread('assets/display_name.jpg', cv.IMREAD_GRAYSCALE)
 
 	if args.test:
@@ -130,17 +130,18 @@ def main():
 			time_stamps.append(TimeStamp('ocr_time'))
 
 			question, options = splitQuestionAndOptions(text)
+			record = Record()
+			record.setQuestion(question)
+			record.setOptions(options)
 			print(colored(question, 'light_grey'))
 			for option in options:
 				print(colored(option, 'light_grey'))
 
 			# Match question from database
 			if ans_index := matchQuestionFromDatabase(text, data):
-				ans_color = 'blue'
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
 			else: # LLM
-				ans_color = 'yellow'
 				if args.llm == 'gpt':
 					ans_text = gpt.Answer(text)
 					ans_source = 'GPT'
@@ -152,17 +153,20 @@ def main():
 					ans_source = 'Gemini'
 				ans_index = matchOption(ans_text, options)
 			ans = str(ans_index) + '. ' + ans_text
+			record.setAnswer(ans)
+			record.setAnswerSource(ans_source)
 
 			# Tap
 			try: tapOption(ans_index)
 			except ValueError: tapOption(1)
 
-			# Print answer
-			print(colored('\n' + ans + ' \n', ans_color, attrs=['reverse']))
-			print(colored(f'from {ans_source}', 'dark_grey'))
 			time_stamps.append(TimeStamp('end_time'))
+			record.setTimeStamps(time_stamps)
+			dashboard.addRecord(record)
 
-			dashboard.printTimes(time_stamps)
+			dashboard.printAnswer()
+			dashboard.printSource()
+			dashboard.printTimes()
 
 			if args.speech: speak(ans_text)
 
@@ -173,8 +177,8 @@ def main():
 					break
 				real_ans_index = matchCorrentAnswer(image)
 				if real_ans_index != -1:
-					dashboard.addRecord(ans_index == real_ans_index, ans_source)
-					dashboard.printRealAnswer(real_ans_index)
+					dashboard.records[-1].setRealAnswerIndex(real_ans_index)
+					dashboard.printRealAnswer()
 					break
 			print('====================')
 			dashboard.printScore()
@@ -182,20 +186,8 @@ def main():
 			# Save image
 			cv.imwrite(image_path, cropped_image)
 
-			# Save data
-			item = {
-				'image_path': image_path,
-				'question': question,
-				'options': options,
-				'ans': ans,
-				'ans_source': ans_source,
-				'real_ans': real_ans_index,
-				'execution_time': calculateExecutionTime(time_stamps[0].value, time_stamps[-1].value)
-			}
-
-			with open(data_path, 'a') as jsonl_file:
-				jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
-
+			record.setImagePath(image_path)
+			record.saveRecord(data_path)
 
 if __name__ == '__main__':
 	main()
