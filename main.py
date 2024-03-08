@@ -142,6 +142,9 @@ def main():
 				ans_text = options[int(ans_index) - 1]
 			else: # LLM
 				if args.llm == 'gpt':
+					model_id = 'GPT-4'
+					ans_text = gpt.Answer(text, model_id=model_id)
+					ans_source = model_id
 					ans_text = gpt.Answer(text)
 					ans_source = 'GPT'
 				elif args.llm == 'gemini':
@@ -171,6 +174,7 @@ def main():
 			while True:
 				image = wincap.get_image_from_window()
 				if is_triggered(image):
+					dashboard.records[-1].setRealAnswerIndex(-1)
 					break
 				real_ans_index = matchCorrentAnswer(image)
 				if real_ans_index != -1:
