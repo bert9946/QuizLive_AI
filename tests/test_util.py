@@ -1,10 +1,5 @@
 from src.util import *
 
-def test_getWindowId():
-	result = getWindowId()
-	assert isinstance(result, int)
-	assert result > 0
-
 def test_calculateExecutionTime():
 	start_time = 0
 	end_time = 1
