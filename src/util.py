@@ -36,27 +36,6 @@ def json_to_jsonl(input_path, output_path):
         for item in data:
             jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
 
-# from log data to fine_tuning data
-def modifyData(data):
-    modified_data = {
-        'messages':
-            [
-                {
-                    'role': 'system',
-                    'content': '根據問題，回答最可能的答案。（只要回答選項的數字順序以及文字，如：「1. 選項一」。）'
-                },
-                {
-                    'role': 'user',
-                    'content': data['question'] + '\n' + '\n'.join(data['options'])
-                },
-                {
-                    'role': 'assistant',
-                    'content': data['real_ans']+'. '+data['options'][int(data['real_ans'])-1]
-                }
-            ]
-    }
-    return modified_data
-
 # determine if a pixel is a given color with a tolerance
 def is_pixel_color_tolerance(pixel, color, tolerance=10):
     return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))
