@@ -38,7 +38,6 @@ def detect_text(ci_image):
     request.setRecognitionLanguages_(['zh-Hant'])
     request.setRevision_(Vision.VNRecognizeTextRequestRevision3)
     request.setRecognitionLevel_(0)
-    # request.setUsesLanguageCorrection_(False)
 
     # Perform the text-recognition request.
     error = request_handler.performRequests_error_([request], None)
