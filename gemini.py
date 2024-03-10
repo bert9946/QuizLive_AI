@@ -1,7 +1,6 @@
 import os
-from timeout_decorator import timeout
-
-import google.generativeai as genai
+import time
+import aiohttp
 
 
 class Gemini:
@@ -30,14 +29,41 @@ class Gemini:
 	MODEL_DICT = {
 		'Gemini-Pro': "gemini-pro"
 	}
+
 	def __init__(self, model_id='Gemini-Pro'):
 		GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-		genai.configure(api_key=GOOGLE_API_KEY)
 		self.model_id = model_id
 		self.model_name = self.MODEL_DICT[self.model_id]
-		self.model = genai.GenerativeModel(self.model_name, safety_settings=self.SAFETY_SETTINGS)
+		self.__url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GOOGLE_API_KEY}"
 
-	@timeout(5)
-	def Answer(self, text):
-		response = self.model.generate_content(text)
-		return response.text
+	async def answer(self, text):
+		headers = {
+			"Content-Type": "application/json"
+		}
+		data = {
+			"contents": [{
+				"parts": [{
+					"text": text
+				}]
+			}]
+		}
+
+		start_time = time.time()
+
+		timeout = aiohttp.ClientTimeout(total=3)
+
+		try:
+			async with aiohttp.ClientSession(timeout=timeout) as session:
+				async with session.post(self.__url, headers=headers, json=data) as response:
+					response_data = await response.json()
+					response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+		except:
+			response_text = "None"
+		end_time = time.time()
+		result = {
+			'model': self.model_id,
+			'text': response_text,
+			'time_elapsed': int((end_time - start_time) * 1000)
+		}
+
+		return result

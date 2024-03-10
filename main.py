@@ -4,10 +4,9 @@ from termcolor import colored
 import argparse
 import json
 import cv2 as cv
+import asyncio
 
-from gpt import GPT
-from gemini import Gemini
-from claude import Claude
+from LLMs import Answer, vote
 
 from windowcapture import WindowCapture
 from src.ocr import image2text
@@ -16,12 +15,11 @@ from adb import *
 from dashboard import Dashboard, Record, TimeStamp
 
 
-def main():
+async def main():
 	parser = argparse.ArgumentParser(description='Quiz Live AI')
 	parser.add_argument('--test', action='store_true', help="won't save data to file")
 	parser.add_argument('-c', '--continuous', action='store_true', help="continuous mode")
 	parser.add_argument('--stage-master', action='store_true', help="match stage master")
-	parser.add_argument("--llm", help="language model to use", dest="llm", default="gpt")
 
 	args = parser.parse_args()
 
@@ -29,13 +27,6 @@ def main():
 	wincap = WindowCapture(window_name)
 
 	dashboard = Dashboard()
-
-	if args.llm == 'gpt':
-		llm = GPT('GPT-4-Turbo')
-	elif args.llm == 'gemini':
-		llm = Gemini('Gemini-Pro')
-	elif args.llm == 'claude':
-		llm = Claude('Claude-3-Opus')
 
 	isInMatch = False
 	x = 0
@@ -118,7 +109,7 @@ def main():
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			with open('data/data.jsonl', 'r', encoding='utf8') as file:
 				data = [json.loads(line) for line in file]
-			time.sleep(3.3)
+			await asyncio.sleep(3.3)
 
 			time_stamps.append(TimeStamp('start_time'))
 
@@ -146,15 +137,12 @@ def main():
 			# Match question from database
 			if ans_index := matchQuestionFromDatabase(text, data):
 				ans_source = 'database'
-				ans_text = options[int(ans_index) - 1]
 			else: # LLM
-				try:
-					ans_text = llm.Answer(text)
-				except Exception as e:
-					print("An error occurred:", e)
-					ans_text = 'None'
-				ans_source = llm.model_id
-				ans_index = matchOption(ans_text, options)
+				responses = await Answer(text)
+				record.setLLMResponses(responses)
+				ans_index = vote(responses, options)
+				ans_source = 'LLM'
+			ans_text = options[ans_index - 1]
 			ans = str(ans_index) + '. ' + ans_text
 			record.setAnswer(ans)
 			record.setAnswerSource(ans_source)
@@ -168,6 +156,9 @@ def main():
 			dashboard.addRecord(record)
 
 			dashboard.printAnswer()
+			if ans_source == 'LLM':
+				for response in responses:
+					print(format(response['model'], '16s'), format(response['text'], '8s'), format(response['time_elapsed'], '4d'), 'ms')
 			dashboard.printSource()
 			dashboard.printTimes()
 
@@ -192,4 +183,4 @@ def main():
 			record.saveRecord(data_path)
 
 if __name__ == '__main__':
-	main()
+	asyncio.run(main())

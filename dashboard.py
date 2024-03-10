@@ -20,6 +20,9 @@ class Record:
 	def setAnswer(self, ans):
 		self.ans = ans
 
+	def setLLMResponses(self, responses):
+		self.LLM_responses = responses
+
 	def setRealAnswerIndex(self, index):
 		self.real_ans_index = index
 
@@ -45,6 +48,8 @@ class Record:
 			'real_ans': self.real_ans_index,
 			'execution_time': self.getExecutionTime()
 		}
+		if self.source == 'LLM':
+			item['LLM_responses'] = self.LLM_responses
 
 		with open(data_path, 'a') as jsonl_file:
 			jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
