@@ -1,9 +1,8 @@
 import subprocess
 import json
+import random
 from thefuzz import fuzz
 import cv2 as cv
-
-from adb import simulateTap
 
 
 def captureWindow(image_path='tmp/test.jpg', window_id=None):
@@ -21,8 +20,13 @@ def splitQuestionAndOptions(text):
     lines = text.strip().split('\n')
     question = ''.join(lines[:-4])
     options = lines[-4:]
-
     return question, options
+
+def combineQuestionAndOptionsFromItem(item):
+	return combineQuestionAndOptions(item['question'], item['options'])
+
+def combineQuestionAndOptions(question, options):
+    return question + '\n' + '\n'.join(options)
 
 def json_to_jsonl(input_path, output_path):
     with open(input_path, 'r') as json_file:
@@ -101,7 +105,7 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
 
     candidates = []
     for item in data:
-        if isEntryValid(item):
+        if isItemValid(item):
             if (question_score := fuzz.ratio(question, item['question'])) > question_score_threshold:
                 if (options_score := fuzz.token_sort_ratio(options_str, ' '.join(item['options']))) > options_score_threshold:
                     item['question_score'] = question_score
@@ -125,8 +129,13 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
     ans = target['options'][int(target['real_ans'])-1]
     return matchOption(ans, options)
 
-def isEntryValid(entry):
-    return entry['real_ans'] in [1, 2, 3, 4] and len(entry['options']) == 4
+def isItemValid(item):
+    return item['real_ans'] in [1, 2, 3, 4] and len(item['options']) == 4 and item['question'] != ''
+
+def randomPickItem(data):
+    while True:
+        if isItemValid(item := random.choice(data)):
+            return item
 
 def matchOption(text: str, options: list[str]) -> int:
     if text == '' or options == []:
