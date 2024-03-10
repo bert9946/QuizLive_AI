@@ -2,10 +2,10 @@ from openai import OpenAI
 
 class GPT:
 	MODEL_DICT = {
-		'GPT-3.5': "gpt-3.5-turbo-0125",
-		'GPT-4': "gpt-4-0125-preview"
+		'GPT-3.5-Turbo': "gpt-3.5-turbo-0125",
+		'GPT-4-Turbo': "gpt-4-0125-preview"
 	}
-	def __init__(self, model_id='GPT-3.5'):
+	def __init__(self, model_id='GPT-3.5-Turbo'):
 		self.client = OpenAI()
 		self.model_id = model_id
 		self.model = self.MODEL_DICT[model_id]
