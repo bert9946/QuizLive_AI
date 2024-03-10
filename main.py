@@ -5,10 +5,11 @@ import argparse
 import json
 import cv2 as cv
 
+from gpt import GPT
+from gemini import Gemini
+from claude import Claude
 
 from windowcapture import WindowCapture
-import gpt
-from gemini import Gemini
 from src.ocr import image2text
 from src.util import *
 from adb import *
@@ -28,7 +29,13 @@ def main():
 	wincap = WindowCapture(window_name)
 
 	dashboard = Dashboard()
-	gemini = Gemini()
+
+	if args.llm == 'gpt':
+		llm = GPT('GPT-4-Turbo')
+	elif args.llm == 'gemini':
+		llm = Gemini('Gemini-Pro')
+	elif args.llm == 'claude':
+		llm = Claude('Claude-3-Opus')
 
 	isInMatch = False
 	x = 0
@@ -141,18 +148,12 @@ def main():
 				ans_source = 'database'
 				ans_text = options[int(ans_index) - 1]
 			else: # LLM
-				if args.llm == 'gpt':
-					model_id = 'GPT-4'
-					ans_text = gpt.Answer(text, model_id=model_id)
-					ans_source = model_id
-					ans_text = gpt.Answer(text)
-					ans_source = 'GPT'
-				elif args.llm == 'gemini':
-					try:
-						ans_text = gemini.Answer(text)
-					except Exception:
-						ans_text = 'None'
-					ans_source = 'Gemini'
+				try:
+					ans_text = llm.Answer(text)
+				except Exception as e:
+					print("An error occurred:", e)
+					ans_text = 'None'
+				ans_source = llm.model_id
 				ans_index = matchOption(ans_text, options)
 			ans = str(ans_index) + '. ' + ans_text
 			record.setAnswer(ans)
