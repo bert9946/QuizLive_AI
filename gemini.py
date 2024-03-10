@@ -27,11 +27,15 @@ class Gemini:
 			"threshold": "BLOCK_NONE",
 		},
 	]
-	def __init__(self, model_id='gemini-pro'):
+	MODEL_DICT = {
+		'Gemini-Pro': "gemini-pro"
+	}
+	def __init__(self, model_id='Gemini-Pro'):
 		GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 		genai.configure(api_key=GOOGLE_API_KEY)
 		self.model_id = model_id
-		self.model = genai.GenerativeModel(self.model_id, safety_settings=self.SAFETY_SETTINGS)
+		self.model_name = self.MODEL_DICT[self.model_id]
+		self.model = genai.GenerativeModel(self.model_name, safety_settings=self.SAFETY_SETTINGS)
 
 	@timeout(5)
 	def Answer(self, text):
