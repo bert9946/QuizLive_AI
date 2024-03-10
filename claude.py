@@ -3,12 +3,14 @@ from timeout_decorator import timeout
 
 
 class Claude:
-    def __init__(self, model_id='Opus'):
+    MODEL_DICT = {
+        'Claude-3-Opus': "claude-3-opus-20240229",
+        'Claude-3-Sonnet': "claude-3-sonnet-20240229"
+    }
+    def __init__(self, model_id='Claude-3-Opus'):
         self.client = anthropic.Anthropic()
-        if model_id == 'Opus':
-            self.model = "claude-3-opus-20240229"
-        if model_id == 'Sonnet':
-            self.model = "claude-3-sonnet-20240229"
+        self.model_id = model_id
+        self.model = self.MODEL_DICT[model_id]
 
     @timeout(5)
     def Answer(self, text):
@@ -22,5 +24,4 @@ class Claude:
                 {"role": "user", "content": text}
             ]
         )
-
         return message.content[0].text
