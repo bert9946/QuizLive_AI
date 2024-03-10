@@ -8,21 +8,12 @@ from AppKit import NSBitmapImageRep, NSImage
 from Foundation import NSData
 
 
-def make_request_handler(results):
-    """results: list to store results"""
-    if not isinstance(results, list):
-        raise ValueError("results must be a list")
-
-    def handler(request, error):
-        if error:
-            print(f"Error! {error}")
-        else:
-            observations = request.results()
-            for text_observation in observations:
-                recognized_text = text_observation.topCandidates_(1)[0]
-                results.append([recognized_text.string(), recognized_text.confidence()])
-
-    return handler
+def image2text(numpy_array: np.ndarray) -> str:
+    nsi = createNSImageFromNumpyArray(numpy_array)
+    cii = convertNSImageToCIImage(nsi)
+    results = detect_text(cii)
+    text = '\n'.join([i[0] for i in results])
+    return text
 
 def detect_text(ci_image):
 
@@ -44,6 +35,21 @@ def detect_text(ci_image):
 
     return results
 
+def make_request_handler(results):
+    """results: list to store results"""
+    if not isinstance(results, list):
+        raise ValueError("results must be a list")
+
+    def handler(request, error):
+        if error:
+            print(f"Error! {error}")
+        else:
+            observations = request.results()
+            for text_observation in observations:
+                recognized_text = text_observation.topCandidates_(1)[0]
+                results.append([recognized_text.string(), recognized_text.confidence()])
+
+    return handler
 
 """Create a CIImage from a numpy array"""
 """from: https://gist.github.com/RhetTbull/1c34fc07c95733642cffcd1ac587fc4c?permalink_comment_id=4945454#gistcomment-4945454"""
@@ -63,10 +69,3 @@ def convertNSImageToCIImage(nsimage):
     bitmap = NSBitmapImageRep.alloc().initWithData_(imageData)
     ciimage = CIImage.alloc().initWithBitmapImageRep_(bitmap)
     return ciimage
-
-def image2text(numpy_array: np.ndarray) -> str:
-    nsi = createNSImageFromNumpyArray(numpy_array)
-    cii = convertNSImageToCIImage(nsi)
-    results = detect_text(cii)
-    text = '\n'.join([i[0] for i in results])
-    return text
