@@ -36,6 +36,7 @@ def json_to_jsonl(input_path, output_path):
 def is_pixel_color_tolerance(pixel, color, tolerance=10):
     return all(abs(pixel[i] - color[i]) < tolerance for i in range(3))
 
+# TODO: improve the function
 def is_triggered(image):
 
     # android emulator Pixel 7 pro
