@@ -1,27 +1,31 @@
+from enum import Enum
 import os
 import time
 import aiohttp
-class Claude:
-	MODEL_DICT = {
-		'Claude-3-Opus': "claude-3-opus-20240229",
-		'Claude-3-Sonnet': "claude-3-sonnet-20240229"
-	}
 
-	def __init__(self, model_id='Claude-3-Opus'):
+class Claude_Model(Enum):
+	CLAUDE_3_OPUS = "claude-3-opus-20240229"
+	CLAUDE_3_SONNET = "claude-3-sonnet-20240229"
+
+	def __str__(self):
+		return self.name.replace('_', '-').capitalize()
+
+class Claude:
+	def __init__(self, model_id=Claude_Model.CLAUDE_3_OPUS):
 		self.model_id = model_id
-		self.model = self.MODEL_DICT[model_id]
-		self.ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+		self.model = self.model_id.value
+		self.__ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 
 	async def answer(self, text):
 		start_time = time.time()
 		url = "https://api.anthropic.com/v1/messages"
 		headers = {
-			"x-api-key": self.ANTHROPIC_API_KEY,
+			"x-api-key": self.__ANTHROPIC_API_KEY,
 			"anthropic-version": "2023-06-01",
 			"content-type": "application/json",
 		}
 		data = {
-			"model": self.MODEL_DICT[self.model_id],
+			"model": self.model,
 			"stop_sequences": ["。"],
 			"max_tokens": 100,
 			"temperature": 0.0,
@@ -43,7 +47,7 @@ class Claude:
 		end_time = time.time()
 
 		result = {
-			'model': self.model_id,
+			'model': str(self.model_id),
 			'text': response_text,
 			'time_elapsed': int((end_time - start_time) * 1000)
 		}

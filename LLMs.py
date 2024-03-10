@@ -1,19 +1,19 @@
 import time
 import asyncio
 
-from gemini import Gemini
-from gpt import GPT
-from claude import Claude
+from gemini import Gemini, Gemini_Model
+from gpt import GPT, GPT_Model
+from claude import Claude, Claude_Model
 
 from src.util import *
 
 
 async def Answer(text):
-	gemini = Gemini('Gemini-Pro')
-	claude_opus = Claude('Claude-3-Opus')
-	# claude_sonnet = Claude('Claude-3-Sonnet')
-	# gpt_4 = GPT('GPT-4-Turbo')
-	gpt_35 = GPT('GPT-3.5-Turbo')
+	gemini = Gemini(Gemini_Model.GEMINI_PRO)
+	claude_opus = Claude(Claude_Model.CLAUDE_3_SONNET)
+	# claude_sonnet = Claude(Claude_Model.CLAUDE_3_OPUS)
+	# gpt_4 = GPT(GPT_Model.GPT_4_TURBO)
+	gpt_35 = GPT(GPT_Model.GPT_3_5_TURBO)
 
 	tasks = [
 			gemini.answer(text),
