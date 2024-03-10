@@ -118,7 +118,7 @@ def main():
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			with open('data/data.jsonl', 'r', encoding='utf8') as file:
 				data = [json.loads(line) for line in file]
-			time.sleep(3.25)
+			time.sleep(3.3)
 
 			time_stamps.append(TimeStamp('start_time'))
 
