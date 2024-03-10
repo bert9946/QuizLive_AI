@@ -1,8 +1,22 @@
+import cv2 as cv
+import random
+import json
+
 from src.ocr import *
+from src.util import splitQuestionAndOptions
 
 def test_ocr():
-	result = detect_text('images/test_1_cropped.jpg')
-	text = '\n'.join([i[0] for i in result])
-	assert text != ''
-	assert len(text) > 0
-	assert len(text) < 1000
+	with open('data/data.jsonl', 'r', encoding='utf8') as file:
+		data = [json.loads(line) for line in file]
+
+	item = random.choice(data)
+
+	image_path = item['image_path']
+	image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
+
+	text = image2text(image)
+
+	question, options = splitQuestionAndOptions(text)
+
+	assert question == item['question']
+	assert options == item['options']
