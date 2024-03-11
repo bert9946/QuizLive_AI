@@ -13,6 +13,7 @@ class Gemini_Model(Enum):
 
 class Gemini:
 	SYSTEM_PROMPT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不要解釋原因，只要回答選項文字）"
+
 	def __init__(self, model_id=Gemini_Model.GEMINI_PRO):
 		GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 		self.model_id = model_id
@@ -20,6 +21,18 @@ class Gemini:
 		self.__url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GOOGLE_API_KEY}"
 
 	async def answer(self, text, timeout: float = 3.0):
+		start_time = time.time()
+		response_data = await self.sendRequest(text, timeout=timeout)
+		response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+		end_time = time.time()
+		result = {
+			'model': str(self.model_id),
+			'text': response_text,
+			'time_elapsed': int((end_time - start_time) * 1000)
+		}
+		return result
+
+	async def sendRequest(self, text, timeout: float = 3.0):
 		headers = {
 			"Content-Type": "application/json"
 		}
@@ -29,10 +42,10 @@ class Gemini:
 					"text": self.SYSTEM_PROMPT,
 					"text": text
 				}]
-			}]
+			}],
+			"safetySettings": self.SAFETY_SETTINGS,
+			"generationConfig": self.GENERATION_CONFIG
 		}
-
-		start_time = time.time()
 
 		timeout_ = aiohttp.ClientTimeout(total=timeout)
 
@@ -40,24 +53,15 @@ class Gemini:
 			async with aiohttp.ClientSession(timeout=timeout_) as session:
 				async with session.post(self.__url, headers=headers, json=data) as response:
 					response_data = await response.json()
-					response_text = response_data['candidates'][0]['content']['parts'][0]['text']
 		except Exception as e:
-			print(e)
 			response_text = "None"
-		end_time = time.time()
-		result = {
-			'model': str(self.model_id),
-			'text': response_text,
-			'time_elapsed': int((end_time - start_time) * 1000)
-		}
+		return response_data
 
-		return result
-
+	GENERATION_CONFIG = {
+		"temperature": 1.0,
+		"maxOutputTokens": 100,
+	}
 	SAFETY_SETTINGS = [
-		{
-			"category": "HARM_CATEGORY_DANGEROUS",
-			"threshold": "BLOCK_NONE",
-		},
 		{
 			"category": "HARM_CATEGORY_HARASSMENT",
 			"threshold": "BLOCK_NONE",
@@ -73,5 +77,5 @@ class Gemini:
 		{
 			"category": "HARM_CATEGORY_DANGEROUS_CONTENT",
 			"threshold": "BLOCK_NONE",
-		},
+		}
 	]
