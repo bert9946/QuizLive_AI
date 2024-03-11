@@ -119,31 +119,31 @@ async def main():
 		else:
 			time_stamps = []
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
-			with open('data/data.jsonl', 'r', encoding='utf8') as file:
-				data = [json.loads(line) for line in file]
-			await asyncio.sleep(3.3)
+			await asyncio.sleep(1.75)
+
+			# Capture question
+			image = wincap.get_image_from_window()
+			image = preprocess_image(image)
+			question_image = image[:300, :]
+			question = await image2text(question_image)
+			question = question.replace('\n', '')
+
+			await asyncio.sleep(1.5)
 
 			time_stamps.append(TimeStamp('start_time'))
 
+			# Capture options
 			image = wincap.get_image_from_window()
 			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
-
-			# Crop
-			cropped_image = crop_image(image)
-			cropped_image = cv.cvtColor(cropped_image, cv.COLOR_BGR2GRAY)
-			print(colored('Cropped', 'dark_grey'), end='\r', flush=True)
+			image = preprocess_image(image)
 			time_stamps.append(TimeStamp('capturing_time'))
 
-			# OCR
-			question_image = cropped_image[:300, :]
-			option_images = [cropped_image[380+i*160:508+i*160, 30:450] for i in range(4)]
+			option_images = [image[380+i*160:508+i*160, 30:450] for i in range(4)]
 
-			tasks = [image2text(image) for image in [question_image] + option_images]
-			texts = await asyncio.gather(*tasks)
+			tasks = [image2text(image) for image in option_images]
+			options = await asyncio.gather(*tasks)
 			time_stamps.append(TimeStamp('ocr_time'))
 
-			question = texts[0].replace('\n', '')
-			options = texts[1:]
 			text = combineQuestionAndOptions(question, options)
 
 			record = Record()
@@ -195,7 +195,7 @@ async def main():
 			dashboard.printScore()
 
 			# Save image
-			cv.imwrite(image_path, cropped_image)
+			cv.imwrite(image_path, image)
 
 			record.setImagePath(image_path)
 			record.saveRecord(data_path)
