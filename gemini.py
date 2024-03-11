@@ -23,7 +23,10 @@ class Gemini:
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
 		response_data = await self.sendRequest(text, timeout=timeout)
-		response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+		try:
+			response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+		except:
+			response_text = "None"
 		end_time = time.time()
 		result = {
 			'model': str(self.model_id),
@@ -54,7 +57,7 @@ class Gemini:
 				async with session.post(self.__url, headers=headers, json=data) as response:
 					response_data = await response.json()
 		except Exception as e:
-			response_text = "None"
+			response_data = "None"
 		return response_data
 
 	GENERATION_CONFIG = {
