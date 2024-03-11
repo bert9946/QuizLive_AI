@@ -5,7 +5,7 @@ import json
 from src.ocr import *
 from src.util import splitQuestionAndOptions
 
-def test_ocr():
+async def test_ocr():
 	with open('data/data.jsonl', 'r', encoding='utf8') as file:
 		data = [json.loads(line) for line in file]
 
@@ -14,7 +14,7 @@ def test_ocr():
 	image_path = item['image_path']
 	image = cv.imread(image_path, cv.IMREAD_GRAYSCALE)
 
-	text = image2text(image)
+	text = await image2text(image)
 
 	question, options = splitQuestionAndOptions(text)
 
