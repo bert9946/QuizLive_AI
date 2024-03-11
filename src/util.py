@@ -8,6 +8,12 @@ def crop_image(image):
 	h, w = image.shape[:2]
 	return image[int(h*.27):int(h*.9), int(w*0.17):int(w*0.84)]
 
+def convertBGR2GRAY(image):
+	return cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
+def preprocess_image(image):
+    return crop_image(convertBGR2GRAY(image))
+
 def calculateExecutionTime(start_time, end_time):
     return int((end_time - start_time) * 1000)
 
