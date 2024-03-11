@@ -123,16 +123,25 @@ async def main():
 			time_stamps.append(TimeStamp('capturing_time'))
 
 			# OCR
-			text = image2text(cropped_image)
+			question_image = cropped_image[:300, :]
+			option_image = cropped_image[380 : 983, 30:450]
+
+			tasks = [image2text(image) for image in [question_image, option_image]]
+			texts = await asyncio.gather(*tasks)
 			time_stamps.append(TimeStamp('ocr_time'))
 
-			question, options = splitQuestionAndOptions(text)
+			question = texts[0].replace('\n', '')
+			options = texts[1].split('\n')
+			text = combineQuestionAndOptions(question, options)
+
 			record = Record()
 			record.setQuestion(question)
 			record.setOptions(options)
-			print(colored(question, 'light_grey'))
-			for option in options:
-				print(colored(option, 'light_grey'))
+
+			print(text)
+			# print(colored(question, 'light_grey'))
+			# for option in options:
+			# 	print(colored(option, 'light_grey'))
 
 			# Match question from database
 			if ans_index := matchQuestionFromDatabase(text, data):

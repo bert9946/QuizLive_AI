@@ -1,6 +1,7 @@
 import io
 import numpy as np
 from PIL import Image
+import asyncio
 
 import Vision
 from Quartz import CIImage
@@ -8,14 +9,14 @@ from AppKit import NSBitmapImageRep, NSImage
 from Foundation import NSData
 
 
-def image2text(numpy_array: np.ndarray) -> str:
+async def image2text(numpy_array: np.ndarray) -> str:
     nsi = createNSImageFromNumpyArray(numpy_array)
     cii = convertNSImageToCIImage(nsi)
-    results = detect_text(cii)
+    results = await detect_text(cii)
     text = '\n'.join([i[0] for i in results])
     return text
 
-def detect_text(ci_image):
+async def detect_text(ci_image):
 
     # Create a new image-request handler.
     request_handler = Vision.VNImageRequestHandler.alloc().initWithCIImage_options_(
@@ -26,14 +27,16 @@ def detect_text(ci_image):
 
     # Create a new request to recognize text.
     request = Vision.VNRecognizeTextRequest.alloc().initWithCompletionHandler_(handler)
-    request.setRecognitionLanguages_(['zh-Hant'])
+    request.setRecognitionLanguages_(['zh-Hant', 'en'])
     request.setRevision_(Vision.VNRecognizeTextRequestRevision3)
     request.setRecognitionLevel_(Vision.VNRequestTextRecognitionLevelAccurate)
+    request.setUsesLanguageCorrection_(True)
+    request.setCustomWords_(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'])
 
-    # Perform the text-recognition request.
-    error = request_handler.performRequests_error_([request], None)
-
+    # Perform the text-recognition request asynchronously
+    await asyncio.get_event_loop().run_in_executor(None, request_handler.performRequests_error_, [request], None)
     return results
+
 
 def make_request_handler(results):
     """results: list to store results"""
