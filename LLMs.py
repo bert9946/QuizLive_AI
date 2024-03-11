@@ -8,25 +8,25 @@ from claude import Claude, Claude_Model
 from src.util import *
 
 
-async def Answer(text):
-	gemini = Gemini(Gemini_Model.GEMINI_PRO)
-	claude_opus = Claude(Claude_Model.CLAUDE_3_SONNET)
-	# claude_sonnet = Claude(Claude_Model.CLAUDE_3_OPUS)
-	# gpt_4 = GPT(GPT_Model.GPT_4_TURBO)
-	gpt_35 = GPT(GPT_Model.GPT_3_5_TURBO)
+async def Answer(text,
+					models: list = [Gemini_Model.GEMINI_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
+					timeout: float = 3.0):
+	llms = []
+	for model in models:
+		if isinstance(model, Gemini_Model):
+			llms.append(Gemini(model))
+		elif isinstance(model, Claude_Model):
+			llms.append(Claude(model))
+		elif isinstance(model, GPT_Model):
+			llms.append(GPT(model))
+		else:
+			raise ValueError('Invalid model')
 
-	tasks = [
-			gemini.answer(text),
-			claude_opus.answer(text),
-			# claude_sonnet.answer(text),
-			# gpt_4.answer(text),
-			gpt_35.answer(text),
-		]
+	tasks = [llm.answer(text, timeout=timeout) for llm in llms]
 	results = await asyncio.gather(*tasks)
 	return results
 
 def vote(results, options) -> int:
-	# answer_indices = [matchOption(result['text'], options) for result in results]
 	answer_indices = []
 	for result in results:
 		if result['text'] != 'None':

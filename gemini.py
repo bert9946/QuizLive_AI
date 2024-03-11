@@ -16,7 +16,7 @@ class Gemini:
 		self.model_name = self.model_id.value
 		self.__url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GOOGLE_API_KEY}"
 
-	async def answer(self, text):
+	async def answer(self, text, timeout: float = 3.0):
 		headers = {
 			"Content-Type": "application/json"
 		}
@@ -30,10 +30,10 @@ class Gemini:
 
 		start_time = time.time()
 
-		timeout = aiohttp.ClientTimeout(total=3)
+		timeout_ = aiohttp.ClientTimeout(total=timeout)
 
 		try:
-			async with aiohttp.ClientSession(timeout=timeout) as session:
+			async with aiohttp.ClientSession(timeout=timeout_) as session:
 				async with session.post(self.__url, headers=headers, json=data) as response:
 					response_data = await response.json()
 					response_text = response_data['candidates'][0]['content']['parts'][0]['text']

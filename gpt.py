@@ -22,7 +22,7 @@ class GPT:
 		self.model_id = model_id
 		self.model = self.model_id.value
 
-	async def answer(self, text):
+	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
 		self.client = AsyncOpenAI()
 		completion = await self.client.chat.completions.create(
@@ -31,7 +31,7 @@ class GPT:
 				{"role": "system", "content": self.SYSTEM_TEXT},
 				{"role": "user", "content": text}
 			],
-			timeout=3
+			timeout=timeout
 		)
 		end_time = time.time()
 		result = {
