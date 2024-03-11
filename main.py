@@ -124,14 +124,14 @@ async def main():
 
 			# OCR
 			question_image = cropped_image[:300, :]
-			option_image = cropped_image[380 : 983, 30:450]
+			option_images = [cropped_image[380+i*160:508+i*160, 30:450] for i in range(4)]
 
-			tasks = [image2text(image) for image in [question_image, option_image]]
+			tasks = [image2text(image) for image in [question_image] + option_images]
 			texts = await asyncio.gather(*tasks)
 			time_stamps.append(TimeStamp('ocr_time'))
 
 			question = texts[0].replace('\n', '')
-			options = texts[1].split('\n')
+			options = texts[1:]
 			text = combineQuestionAndOptions(question, options)
 
 			record = Record()
