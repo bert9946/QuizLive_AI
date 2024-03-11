@@ -10,6 +10,7 @@ class Gemini_Model(Enum):
 		return self.name.replace('_', '-').capitalize()
 
 class Gemini:
+	SYSTEM_PROMPT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不要解釋原因，只要回答選項文字）"
 	def __init__(self, model_id=Gemini_Model.GEMINI_PRO):
 		GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 		self.model_id = model_id
@@ -23,6 +24,7 @@ class Gemini:
 		data = {
 			"contents": [{
 				"parts": [{
+					"text": self.SYSTEM_PROMPT,
 					"text": text
 				}]
 			}]
@@ -37,7 +39,8 @@ class Gemini:
 				async with session.post(self.__url, headers=headers, json=data) as response:
 					response_data = await response.json()
 					response_text = response_data['candidates'][0]['content']['parts'][0]['text']
-		except:
+		except Exception as e:
+			print(e)
 			response_text = "None"
 		end_time = time.time()
 		result = {
