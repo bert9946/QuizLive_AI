@@ -29,7 +29,7 @@ class Claude:
 			"model": self.model,
 			"stop_sequences": ["。"],
 			"max_tokens": 100,
-			"temperature": 0.0,
+			"temperature": 0.5,
 			"system": "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不要解釋原因，只要回答選項文字）",
 			"messages": [
 				{"role": "user", "content": text}
