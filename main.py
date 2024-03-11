@@ -8,6 +8,10 @@ import asyncio
 
 from LLMs import Answer, vote
 
+from gemini import Gemini_Model
+from gpt import GPT_Model
+from claude import Claude_Model
+
 from windowcapture import WindowCapture
 from src.ocr import image2text
 from src.util import *
@@ -27,6 +31,12 @@ async def main():
 	wincap = WindowCapture(window_name)
 
 	dashboard = Dashboard()
+	MODELS = [Gemini_Model.GEMINI_PRO,
+				Claude_Model.CLAUDE_3_SONNET,
+				Claude_Model.CLAUDE_3_OPUS,
+				GPT_Model.GPT_3_5_TURBO,
+				GPT_Model.GPT_4_TURBO]
+	timeout = 3.0
 
 	isInMatch = False
 	x = 0
@@ -144,7 +154,7 @@ async def main():
 			if ans_index := matchQuestionFromDatabase(text, data):
 				ans_source = 'database'
 			else: # LLM
-				responses = await Answer(text)
+				responses = await Answer(text, models=MODELS, timeout=timeout)
 				record.setLLMResponses(responses)
 				ans_index = vote(responses, options)
 				ans_source = 'LLM'
