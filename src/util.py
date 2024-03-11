@@ -105,7 +105,16 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
     return matchOption(ans, options)
 
 def isItemValid(item):
-    return item['real_ans'] in [1, 2, 3, 4] and len(item['options']) == 4 and item['question'] != ''
+    return isItemhasValidRealAnswer(item) and isItemhasValidOptions(item) and isItemhasValidQuestion(item)
+
+def isItemhasValidRealAnswer(item):
+    return item['real_ans'] in [1, 2, 3, 4]
+
+def isItemhasValidOptions(item):
+    return len(item['options']) == 4
+
+def isItemhasValidQuestion(item):
+    return item['question'] != ''
 
 def randomPickItem(data):
     while True:
