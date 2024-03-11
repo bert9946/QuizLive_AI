@@ -31,7 +31,7 @@ async def detect_text(ci_image):
     request.setRevision_(Vision.VNRecognizeTextRequestRevision3)
     request.setRecognitionLevel_(Vision.VNRequestTextRecognitionLevelAccurate)
     request.setUsesLanguageCorrection_(True)
-    request.setCustomWords_(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'])
+    request.setCustomWords_(['1', '2', '3', '4', '5', '6', '7', '8', '9', '0','_'])
 
     # Perform the text-recognition request asynchronously
     await asyncio.get_event_loop().run_in_executor(None, request_handler.performRequests_error_, [request], None)
