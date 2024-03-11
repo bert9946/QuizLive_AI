@@ -10,10 +10,9 @@ class GPT_Model(Enum):
 
 	def __str__(self):
 		name = re.sub(r'(\d)_(\d)', r'\1.\2', self.name)
-		name = name.replace('_', '-').capitalize()
-
-
-		return self.name.replace('_', '-').capitalize()
+		name = '-'.join(x.capitalize() for x in name.split('_'))
+		name = name.replace('Gpt', 'GPT')
+		return name
 
 class GPT:
 	SYSTEM_TEXT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不用解釋原因，只要回答選項文字）"

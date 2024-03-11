@@ -8,7 +8,8 @@ class Claude_Model(Enum):
 	CLAUDE_3_SONNET = "claude-3-sonnet-20240229"
 
 	def __str__(self):
-		return self.name.replace('_', '-').capitalize()
+		name = '-'.join(x.capitalize() for x in self.name.split('_'))
+		return name
 
 class Claude:
 	def __init__(self, model_id=Claude_Model.CLAUDE_3_OPUS):

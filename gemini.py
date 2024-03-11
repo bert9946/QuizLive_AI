@@ -7,7 +7,9 @@ class Gemini_Model(Enum):
 	GEMINI_PRO = "gemini-pro"
 
 	def __str__(self):
-		return self.name.replace('_', '-').capitalize()
+		name = '-'.join(x.capitalize() for x in self.name.split('_'))
+		return name
+
 
 class Gemini:
 	SYSTEM_PROMPT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不要解釋原因，只要回答選項文字）"
