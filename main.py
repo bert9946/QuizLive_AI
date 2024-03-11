@@ -1,6 +1,6 @@
 import time
 import datetime
-from termcolor import colored
+from termcolor import colored, cprint
 import argparse
 import json
 import cv2 as cv
@@ -138,10 +138,7 @@ async def main():
 			record.setQuestion(question)
 			record.setOptions(options)
 
-			print(text)
-			# print(colored(question, 'light_grey'))
-			# for option in options:
-			# 	print(colored(option, 'light_grey'))
+			cprint(text, 'light_grey')
 
 			# Match question from database
 			if ans_index := matchQuestionFromDatabase(text, data):
