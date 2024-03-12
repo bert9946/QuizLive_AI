@@ -8,9 +8,8 @@ data/
 images/
 tmp/
 assets/
+!assets/demo/demo.mp4
 
 *.mov
-*.txt
-*.csv
-macocr*
-foo.py
+*.json
+*.jsonl
