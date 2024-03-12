@@ -120,7 +120,7 @@ async def main():
 		else:
 			time_stamps = []
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
-			await asyncio.sleep(1.75)
+			await asyncio.sleep(2)
 
 			time_stamps.append(TimeStamp('start_time'))
 			# Capture question
@@ -132,7 +132,7 @@ async def main():
 
 			time_stamps.append(TimeStamp('question_capturing_time'))
 			question_capturing_time = time_stamps[-1].value - time_stamps[-2].value
-			await asyncio.sleep(1.5-question_capturing_time)
+			await asyncio.sleep(1.25-question_capturing_time)
 
 
 			# Capture options

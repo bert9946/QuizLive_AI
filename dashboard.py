@@ -34,7 +34,7 @@ class Record:
 		self.options = options
 
 	def getExecutionTime(self):
-		return calculateExecutionTime(self.time_stamps[0].value, self.time_stamps[-1].value)
+		return calculateExecutionTime(self.time_stamps[0].value, self.time_stamps[-1].value) -1250
 
 	def setTimeStamps(self, time_stamps):
 		self.time_stamps = time_stamps
@@ -115,9 +115,9 @@ class Dashboard:
 
 		time_elapses.append(calculateExecutionTime(time_stamps[0].value, time_stamps[-1].value))
 
-		time_elapses[1] -= 1500
+		time_elapses[1] -= 1250
 		time_elapses[1] += time_elapses[0]
-		time_elapses[3] -= 1500
+		time_elapses[3] -= 1250
 
 		for index, time_elapse in enumerate(time_elapses):
 			print(format(str(tags[index]), '<24s'), format(time_elapse, '4d'), 'ms')
