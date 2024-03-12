@@ -2,6 +2,7 @@ import json
 import random
 from rapidfuzz import fuzz
 import cv2 as cv
+import re
 
 
 def crop_image(image):
@@ -28,6 +29,19 @@ def combineQuestionAndOptionsFromItem(item):
 
 def combineQuestionAndOptions(question, options):
     return question + '\n' + '\n'.join(options)
+
+def processQuestion(question):
+    lines = question.split('\n')
+
+    joined_line = ''
+    for line in lines:
+        if startWithLetter(line):
+            joined_line += ' '
+        joined_line += line
+    return joined_line
+
+def startWithLetter(text):
+    return re.match(r'^[^\u4e00-\u9fa5\W]', text)
 
 def json_to_jsonl(input_path, output_path):
     with open(input_path, 'r') as json_file:

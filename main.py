@@ -128,7 +128,7 @@ async def main():
 			image = preprocess_image(image)
 			question_image = image[:300, :]
 			question = await image2text(question_image)
-			question = question.replace('\n', '')
+			question = processQuestion(question)
 
 			time_stamps.append(TimeStamp('question_capturing_time'))
 			question_capturing_time = time_stamps[-1].value - time_stamps[-2].value

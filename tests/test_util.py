@@ -35,3 +35,9 @@ def test_matchOption():
 	options = ['a', 'b', 'c', 'd']
 	ans = matchOption(text, options)
 	assert ans == 3
+
+def test_processQuestion():
+	text = '''請問網球選手 Novak
+Djokovic 是哪一國人？'''
+	result = processQuestion(text)
+	assert result == '請問網球選手 Novak Djokovic 是哪一國人？'
