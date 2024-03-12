@@ -1,0 +1,12 @@
+opencv-python
+pillow
+openai
+google-generativeai
+anthropic
+termcolor
+jsonlines
+pyobjc-framework-Quartz
+pyobjc-framework-Vision
+rapidfuzz
+aiohttp
+anyio
