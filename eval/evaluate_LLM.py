@@ -4,7 +4,11 @@ from termcolor import colored
 import asyncio
 
 from src.util import *
-from LLMs import Answer, vote
+from src.LLMs import Answer, vote
+
+from src.gemini import Gemini_Model
+from src.gpt import GPT_Model
+from src.claude import Claude_Model
 
 async def main() -> None:
 	start_time = time.time()
@@ -13,7 +17,14 @@ async def main() -> None:
 
 
 	correct_count = 0
-	number = 50
+	number = 10
+	MODELS = [Gemini_Model.GEMINI_PRO,
+				# Claude_Model.CLAUDE_3_SONNET,
+				# Claude_Model.CLAUDE_3_OPUS,
+				# GPT_Model.GPT_3_5_TURBO,
+				# GPT_Model.GPT_4_TURBO
+				]
+
 	for i in range(number):
 		item = randomPickItem(data)
 		if not isItemValid(item):
@@ -26,9 +37,9 @@ async def main() -> None:
 
 		single_start_time = time.time()
 		try:
-			responses = await Answer(text)
+			responses = await Answer(text, models=MODELS, timeout=5.0)
 		except:
-			break
+			continue
 		for response in responses:
 			print(format(response['model'], '16s'), format(response['text'], '8s'), format(response['time_elapsed'], '4d'), 'ms')
 		ans_index = vote(responses, item['options'])

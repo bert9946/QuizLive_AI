@@ -1,9 +1,9 @@
 import time
 import asyncio
 
-from gemini import Gemini, Gemini_Model
-from gpt import GPT, GPT_Model
-from claude import Claude, Claude_Model
+from src.gemini import Gemini, Gemini_Model
+from src.gpt import GPT, GPT_Model
+from src.claude import Claude, Claude_Model
 
 from src.util import *
 
