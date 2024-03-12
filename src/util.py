@@ -110,6 +110,15 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
     ans = target['options'][int(target['real_ans'])-1]
     return matchOption(ans, options)
 
+def matchOption(text: str, options: list[str]) -> int:
+    if text == '' or options == []:
+        return -1
+    ans_fuzz_score = []
+    for option in options:
+        ans_fuzz_score.append(fuzz.ratio(text, option))
+    ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
+    return ans_index
+
 def isItemValid(item):
     return isItemhasValidRealAnswer(item) and isItemhasValidOptions(item) and isItemhasValidQuestion(item)
 
@@ -126,16 +135,6 @@ def randomPickItem(data):
     while True:
         if isItemValid(item := random.choice(data)):
             return item
-
-def matchOption(text: str, options: list[str]) -> int:
-    if text == '' or options == []:
-        return -1
-    ans_fuzz_score = []
-    for option in options:
-        ans_fuzz_score.append(fuzz.ratio(text, option))
-    ans_index = ans_fuzz_score.index(max(ans_fuzz_score)) + 1
-    return ans_index
-
 
 def matchImage(needle_image, haystack_image, mask_image_path=None, crop_coords=None, threshold=0.9):
     if mask_image_path:
