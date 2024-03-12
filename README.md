@@ -8,4 +8,4 @@ Android emulator: Android Studio
 
 Using LLMs(GPT, Gemini or Claude) to answer questions.
 
-![demo video](assets/demo.mp4)
+https://github.com/bert9946/QuizLive_AI/assets/53603989/3b400942-d78a-4306-8382-440dbb6a3aa6
