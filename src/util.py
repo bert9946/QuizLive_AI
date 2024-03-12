@@ -1,6 +1,6 @@
 import json
 import random
-from thefuzz import fuzz
+from rapidfuzz import fuzz
 import cv2 as cv
 
 
