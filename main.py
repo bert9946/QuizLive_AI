@@ -165,11 +165,12 @@ async def main():
 			record.setAnswer(ans)
 			record.setAnswerSource(ans_source)
 
+			time_stamps.append(TimeStamp('end_time'))
+
 			# Tap
 			try: tapOption(ans_index)
 			except ValueError: tapOption(1)
 
-			time_stamps.append(TimeStamp('end_time'))
 			record.setTimeStamps(time_stamps)
 			dashboard.addRecord(record)
 
