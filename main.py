@@ -16,7 +16,7 @@ from windowcapture import WindowCapture
 from src.ocr import image2text
 from src.util import *
 from adb import *
-from dashboard import Dashboard, Record, TimeStamp
+from dashboard import Dashboard, Record, TimeStamp, TimeTag
 
 
 async def main():
@@ -33,11 +33,12 @@ async def main():
 	dashboard = Dashboard()
 	MODELS = [Gemini_Model.GEMINI_PRO,
 				Claude_Model.CLAUDE_3_SONNET,
-				Claude_Model.CLAUDE_3_OPUS,
+				# Claude_Model.CLAUDE_3_OPUS,
 				GPT_Model.GPT_3_5_TURBO,
-				GPT_Model.GPT_4_TURBO]
+				# GPT_Model.GPT_4_TURBO
+	]
 	timeout = 3.0
-	with open('data/data.jsonl', 'r', encoding='utf8') as file:
+	with open('data/optimized_data.jsonl', 'r', encoding='utf8') as file:
 		data = [json.loads(line) for line in file]
 
 	isInMatch = False
@@ -121,6 +122,7 @@ async def main():
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			await asyncio.sleep(1.75)
 
+			time_stamps.append(TimeStamp('start_time'))
 			# Capture question
 			image = wincap.get_image_from_window()
 			image = preprocess_image(image)
@@ -128,21 +130,20 @@ async def main():
 			question = await image2text(question_image)
 			question = question.replace('\n', '')
 
-			await asyncio.sleep(1.5)
+			time_stamps.append(TimeStamp('question_capturing_time'))
+			question_capturing_time = time_stamps[-1].value - time_stamps[-2].value
+			await asyncio.sleep(1.5-question_capturing_time)
 
-			time_stamps.append(TimeStamp('start_time'))
 
 			# Capture options
-			image = wincap.get_image_from_window()
+			complete_image = wincap.get_image_from_window()
 			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
-			image = preprocess_image(image)
-			time_stamps.append(TimeStamp('capturing_time'))
-
+			image = preprocess_image(complete_image)
 			option_images = [image[380+i*160:508+i*160, 30:450] for i in range(4)]
 
 			tasks = [image2text(image) for image in option_images]
 			options = await asyncio.gather(*tasks)
-			time_stamps.append(TimeStamp('ocr_time'))
+			time_stamps.append(TimeStamp('options_capturing_time'))
 
 			text = combineQuestionAndOptions(question, options)
 
@@ -196,7 +197,7 @@ async def main():
 			dashboard.printScore()
 
 			# Save image
-			cv.imwrite(image_path, image)
+			cv.imwrite(image_path, preprocess_image(complete_image))
 
 			record.setImagePath(image_path)
 			record.saveRecord(data_path)

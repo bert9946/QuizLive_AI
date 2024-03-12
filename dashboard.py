@@ -1,6 +1,7 @@
 from time import time
 from termcolor import colored
 import json
+from enum import Enum
 
 from src.util import calculateExecutionTime
 
@@ -98,20 +99,40 @@ class Dashboard:
 
 
 	def printTimes(self):
-		time_elapses = []
-		tags = ['截圖時間', 'OCR 時間', 'LLM 時間', '執行時間']
-		if self.records[-1].source == 'database':
-			tags[2] = '比對時間'
+		record = self.records[-1]
+		time_stamps = record.time_stamps
 
-		time_stamps = self.records[-1].time_stamps
+		tags = [TimeTag(index) for index in range(5)]
+
+		if record.source == 'database':
+			tags.remove(TimeTag.LLM_QUERYING)
+		else:
+			tags.remove(TimeTag.DATABASE_MATCHING)
+
+		time_elapses = []
 		for index, _ in enumerate(time_stamps[:-1]):
 			time_elapses.append(calculateExecutionTime(time_stamps[index].value, time_stamps[index + 1].value))
 
 		time_elapses.append(calculateExecutionTime(time_stamps[0].value, time_stamps[-1].value))
 
-		for index, time_elapse in enumerate(time_elapses):
-			print(tags[index], format(time_elapse, '4d'), '毫秒')
+		time_elapses[1] -= 1500
+		time_elapses[1] += time_elapses[0]
+		time_elapses[3] -= 1500
 
+		for index, time_elapse in enumerate(time_elapses):
+			print(format(str(tags[index]), '<24s'), format(time_elapse, '4d'), 'ms')
+
+
+class TimeTag(Enum):
+	QUESTION_CAPTURING = 0
+	OPTIONS_CAPTURING = 1
+	LLM_QUERYING = 2
+	DATABASE_MATCHING = 3
+	EXECUTION = 4
+
+	def __str__(self):
+		name = ' '.join(x.lower() for x in self.name.split('_')) + ' time'
+		return name
 
 class TimeStamp:
 	def __init__(self, name):
