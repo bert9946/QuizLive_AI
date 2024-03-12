@@ -38,8 +38,6 @@ async def main():
 				# GPT_Model.GPT_4_TURBO
 	]
 	timeout = 3.0
-	with open('data/optimized_data.jsonl', 'r', encoding='utf8') as file:
-		data = [json.loads(line) for line in file]
 
 	isInMatch = False
 	x = 0
@@ -57,6 +55,10 @@ async def main():
 
 	while True:
 		time_stamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+		with open('data/data.jsonl', 'r', encoding='utf8') as file:
+			data = [json.loads(line) for line in file]
+
 		if args.test:
 			image_path = 'tmp/test_0.jpg'
 		else:
