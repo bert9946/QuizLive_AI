@@ -171,8 +171,10 @@ async def main():
 			time_stamps.append(TimeStamp('end_time'))
 
 			# Tap
-			try: tapOption(ans_index)
-			except ValueError: tapOption(1)
+			try:
+				tapOption(ans_index)
+			except ValueError:
+				tapOption(1)
 
 			record.setTimeStamps(time_stamps)
 			dashboard.addRecord(record)
