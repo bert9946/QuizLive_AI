@@ -78,6 +78,11 @@ class Dashboard:
 				print(colored('*', 'red', attrs=[attr]), end=' ')
 		print('\n')
 
+	def printLLMResponses(self):
+		record = self.records[-1]
+		for response in record.LLM_responses:
+			print(format(response['model'], '16s'), format(response['text'], '8s'), format(response['time_elapsed'], '4d'), 'ms')
+
 	def printAnswer(self):
 		if self.records[-1].source == 'database':
 			ans_color = 'blue'

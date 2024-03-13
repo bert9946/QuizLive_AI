@@ -181,8 +181,7 @@ async def main():
 
 			dashboard.printAnswer()
 			if ans_source == 'LLM':
-				for response in responses:
-					print(format(response['model'], '16s'), format(response['text'], '8s'), format(response['time_elapsed'], '4d'), 'ms')
+				dashboard.printLLMResponses()
 			dashboard.printSource()
 			dashboard.printTimes()
 
