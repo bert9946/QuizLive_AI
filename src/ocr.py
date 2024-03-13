@@ -1,7 +1,9 @@
+# pylint: disable=no-name-in-module, no-member
+
 import io
+import asyncio
 import numpy as np
 from PIL import Image
-import asyncio
 
 import Vision
 from Quartz import CIImage
