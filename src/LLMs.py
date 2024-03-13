@@ -9,13 +9,21 @@ from src.util import *
 
 
 async def Answer(text,
-					models: list = [Gemini_Model.GEMINI_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
-					timeout: float = 3.0):
+				models: list = [Gemini_Model.GEMINI_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
+				timeout: float = 3.0):
 	llms = []
 	for model in models:
+		llm = initLLM(model)
+		llms.append(llm)
+
+	tasks = [llm.answer(text, timeout=timeout) for llm in llms]
+	results = await asyncio.gather(*tasks)
+	return results
+
+def initLLM(model):
 		if isinstance(model, Gemini_Model):
-			llms.append(Gemini(model))
-		elif isinstance(model, Claude_Model):
+		return Gemini(model)
+	elif isinstance(model, Claude_Model):
 			llms.append(Claude(model))
 		elif isinstance(model, GPT_Model):
 			llms.append(GPT(model))
