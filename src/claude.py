@@ -2,6 +2,7 @@ from enum import Enum
 import os
 import time
 import aiohttp
+import asyncio
 
 class Claude_Model(Enum):
 	CLAUDE_3_OPUS = "claude-3-opus-20240229"
@@ -20,6 +21,22 @@ class Claude:
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
+
+		try:
+			response_data = await self.sendRequest(text, timeout=timeout)
+			response_text = self.parseResponseData(response_data)
+		except asyncio.exceptions.TimeoutError:
+			response_text = "TIMEOUT"
+		end_time = time.time()
+
+		result = {
+			'model': str(self.model_id),
+			'text': response_text,
+			'time_elapsed': int((end_time - start_time) * 1000)
+		}
+		return result
+
+	async def sendRequest(self, text, timeout: float = 3.0):
 		url = "https://api.anthropic.com/v1/messages"
 		headers = {
 			"x-api-key": self.__ANTHROPIC_API_KEY,
@@ -36,21 +53,13 @@ class Claude:
 				{"role": "user", "content": text}
 			]
 		}
-
 		timeout_ = aiohttp.ClientTimeout(total=timeout)
-		try:
-			async with aiohttp.ClientSession(timeout=timeout_) as session:
-				async with session.post(url, headers=headers, json=data) as response:
-					response_data = await response.json()
-					response_text = response_data['content'][0]['text']
-		except:
-			response_text = "None"
+		async with aiohttp.ClientSession(timeout=timeout_) as session:
+			async with session.post(url, headers=headers, json=data) as response:
+				response_data = await response.json()
+				# response_text = response_data['content'][0]['text']
+		return response_data
 
-		end_time = time.time()
-
-		result = {
-			'model': str(self.model_id),
-			'text': response_text,
-			'time_elapsed': int((end_time - start_time) * 1000)
-		}
-		return result
+	def parseResponseData(self, response_data):
+		response_text = response_data['content'][0]['text']
+		return response_text
