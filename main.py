@@ -6,17 +6,17 @@ import json
 import cv2 as cv
 import asyncio
 
-from LLMs import Answer, vote
+from src.LLMs import Answer, vote
 
-from gemini import Gemini_Model
-from gpt import GPT_Model
-from claude import Claude_Model
+from src.gemini import Gemini_Model
+from src.gpt import GPT_Model
+from src.claude import Claude_Model
 
-from windowcapture import WindowCapture
+from src.windowcapture import WindowCapture
 from src.ocr import image2text
 from src.util import *
-from adb import *
-from dashboard import Dashboard, Record, TimeStamp, TimeTag
+from src.adb import *
+from src.dashboard import Dashboard, Record, TimeStamp
 
 
 async def main():
