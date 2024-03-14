@@ -22,18 +22,14 @@ async def Answer(text,
 	return results
 
 def initLLM(model):
-		if isinstance(model, Gemini_Model):
+	if isinstance(model, Gemini_Model):
 		return Gemini(model)
 	elif isinstance(model, Claude_Model):
-			llms.append(Claude(model))
-		elif isinstance(model, GPT_Model):
-			llms.append(GPT(model))
-		else:
-			raise ValueError('Invalid model')
-
-	tasks = [llm.answer(text, timeout=timeout) for llm in llms]
-	results = await asyncio.gather(*tasks)
-	return results
+		return Claude(model)
+	elif isinstance(model, GPT_Model):
+		return GPT(model)
+	else:
+		raise ValueError('Invalid model')
 
 def vote(results, options) -> int:
 	answer_indices = []
