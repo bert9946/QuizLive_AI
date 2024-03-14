@@ -67,8 +67,7 @@ class Gemini:
 		if 'candidates' in response_data:
 			response_text = response_data['candidates'][0]['content']['parts'][0]['text']
 		elif 'error' in response_data:
-			if response_data['error']['code'] == 503:
-				response_text = 'UNAVAILABLE'
+			response_text = response_data['error']['status']
 		return response_text
 
 	GENERATION_CONFIG = {
