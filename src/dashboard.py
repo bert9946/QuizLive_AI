@@ -52,7 +52,7 @@ class Record:
 		if self.source == 'LLM':
 			item['LLM_responses'] = self.LLM_responses
 
-		with open(data_path, 'a') as jsonl_file:
+		with open(data_path, 'a', encoding='utf8') as jsonl_file:
 			jsonl_file.write(json.dumps(item, ensure_ascii=False) + '\n')
 
 class Dashboard:
