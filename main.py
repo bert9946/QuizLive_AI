@@ -192,7 +192,7 @@ async def main():
 					dashboard.records[-1].setRealAnswerIndex(-1)
 					break
 				real_ans_index = matchCorrentAnswer(image)
-				if real_ans_index != -1:
+				if real_ans_index != 0:
 					dashboard.records[-1].setRealAnswerIndex(real_ans_index)
 					dashboard.printRealAnswer()
 					break

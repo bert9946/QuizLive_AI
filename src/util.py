@@ -82,9 +82,9 @@ def matchCorrentAnswer(image):
     delat_y = 155
 
     if image.shape[0] < y + delat_y * 3:
-        return -1
+        return 0
     if image.shape[1] < x:
-        return -1
+        return 0
 
     target_color = (141, 168, 26)
     tolerance = 50
@@ -92,7 +92,7 @@ def matchCorrentAnswer(image):
     for i in range(4):
         if is_pixel_color_tolerance(image[y + delat_y * i, x], target_color, tolerance):
             return i + 1
-    return -1
+    return 0
 
 def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_score_threshold=80):
     question, options = splitQuestionAndOptions(text)
@@ -126,7 +126,7 @@ def matchQuestionFromDatabase(text, data, question_score_threshold=95, options_s
 
 def matchOption(text: str, options: list[str]) -> int:
     if text == '' or options == []:
-        return -1
+        return 0
     ans_fuzz_score = []
     for option in options:
         ans_fuzz_score.append(fuzz.ratio(text, option))
