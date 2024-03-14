@@ -1,6 +1,7 @@
 import os
 import time
 import aiohttp
+import asyncio
 from enum import Enum
 
 class Gemini_Model(Enum):
@@ -22,12 +23,14 @@ class Gemini:
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
-		response_data = await self.sendRequest(text, timeout=timeout)
 		try:
-			response_text = response_data['candidates'][0]['content']['parts'][0]['text']
-		except:
-			response_text = "None"
+			response_data = await self.sendRequest(text, timeout=timeout)
+			response_text = self.parseResponseData(response_data)
+		except asyncio.exceptions.TimeoutError:
+			response_text = "TIMEOUT"
+
 		end_time = time.time()
+
 		result = {
 			'model': str(self.model_id),
 			'text': response_text,
@@ -54,13 +57,19 @@ class Gemini:
 
 		timeout_ = aiohttp.ClientTimeout(total=timeout)
 
-		try:
-			async with aiohttp.ClientSession(timeout=timeout_) as session:
-				async with session.post(self.__url, headers=headers, json=data) as response:
-					response_data = await response.json()
-		except Exception as e:
-			response_data = "None"
+		async with aiohttp.ClientSession(timeout=timeout_) as session:
+			async with session.post(self.__url, headers=headers, json=data) as response:
+				response_data = await response.json()
+
 		return response_data
+
+	def parseResponseData(self, response_data):
+		if 'candidates' in response_data:
+			response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+		elif 'error' in response_data:
+			if response_data['error']['code'] == 503:
+				response_text = 'UNAVAILABLE'
+		return response_text
 
 	GENERATION_CONFIG = {
 		"temperature": 1.0,
