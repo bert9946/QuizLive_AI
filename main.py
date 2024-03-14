@@ -56,9 +56,6 @@ async def main():
 	while True:
 		time_stamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
-		with open('data/data.jsonl', 'r', encoding='utf8') as file:
-			data = [json.loads(line) for line in file]
-
 		if args.test:
 			image_path = 'tmp/test_0.jpg'
 		else:
@@ -120,6 +117,9 @@ async def main():
 		if not is_triggered(image):
 			print(colored('waiting', 'dark_grey'), end='\r', flush=True)
 		else:
+			with open('data/data.jsonl', 'r', encoding='utf8') as file:
+				data = [json.loads(line) for line in file]
+
 			time_stamps = []
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			await asyncio.sleep(2)
