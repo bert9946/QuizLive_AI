@@ -61,5 +61,8 @@ class Claude:
 		return response_data
 
 	def parseResponseData(self, response_data):
-		response_text = response_data['content'][0]['text']
+		if response_data['type'] == 'message':
+			response_text = response_data['content'][0]['text']
+		elif response_data['type'] == 'error':
+			response_text = response_data['error']['type'].upper()
 		return response_text
