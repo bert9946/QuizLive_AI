@@ -1,11 +1,12 @@
 import time
 import asyncio
+import json
 
-from src.gemini import Gemini, Gemini_Model
-from src.gpt import GPT, GPT_Model
-from src.claude import Claude, Claude_Model
+from gemini import Gemini, Gemini_Model
+from gpt import GPT, GPT_Model
+from claude import Claude, Claude_Model
 
-from src.util import *
+from util import matchOption, randomPickItem, combineQuestionAndOptionsFromItem
 
 
 async def Answer(text,
