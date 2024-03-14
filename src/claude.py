@@ -6,6 +6,7 @@ import aiohttp
 class Claude_Model(Enum):
 	CLAUDE_3_OPUS = "claude-3-opus-20240229"
 	CLAUDE_3_SONNET = "claude-3-sonnet-20240229"
+	CLAUDE_3_HAIKU = "claude-3-haiku-20240307"
 
 	def __str__(self):
 		name = '-'.join(x.capitalize() for x in self.name.split('_'))
