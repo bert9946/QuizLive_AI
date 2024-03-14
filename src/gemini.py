@@ -42,7 +42,9 @@ class Gemini:
 		data = {
 			"contents": [{
 				"parts": [{
-					"text": self.SYSTEM_PROMPT,
+					"text": self.SYSTEM_PROMPT
+				},
+				{
 					"text": text
 				}]
 			}],
