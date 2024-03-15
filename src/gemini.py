@@ -23,20 +23,28 @@ class Gemini:
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
+		success = True
 		try:
 			response_data = await self.sendRequest(text, timeout=timeout)
-			response_text = self.parseResponseData(response_data)
+			response_text, is_error = self.parseResponseData(response_data)
+			if is_error:
+				success = False
+		except asyncio.CancelledError:
+			response_text = "CANCELLED"
+			success = False
 		except asyncio.exceptions.TimeoutError:
 			response_text = "TIMEOUT"
+			success = False
+		finally:
+			end_time = time.time()
 
-		end_time = time.time()
-
-		result = {
-			'model': str(self.model_id),
-			'text': response_text,
-			'time_elapsed': int((end_time - start_time) * 1000)
-		}
-		return result
+			result = {
+				'model': str(self.model_id),
+				'success': success,
+				'text': response_text,
+				'time_elapsed': int((end_time - start_time) * 1000)
+			}
+			return result
 
 	async def sendRequest(self, text, timeout: float = 3.0):
 		headers = {
@@ -66,9 +74,11 @@ class Gemini:
 	def parseResponseData(self, response_data):
 		if 'candidates' in response_data:
 			response_text = response_data['candidates'][0]['content']['parts'][0]['text']
+			is_error = False
 		elif 'error' in response_data:
 			response_text = response_data['error']['status']
-		return response_text
+			is_error = True
+		return response_text, is_error
 
 	GENERATION_CONFIG = {
 		"temperature": 1.0,

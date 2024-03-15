@@ -159,7 +159,7 @@ async def main():
 			if ans_index := matchQuestionFromDatabase(text, data):
 				ans_source = 'database'
 			else: # LLM
-				responses = await Answer(text, models=MODELS, timeout=timeout)
+				responses = await Answer(text, options, models=MODELS, timeout=timeout)
 				record.setLLMResponses(responses)
 				ans_index = vote(responses, options)
 				ans_source = 'LLM'

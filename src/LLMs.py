@@ -1,6 +1,7 @@
 import time
 import asyncio
 import json
+from collections import Counter
 
 from src.gemini import Gemini, Gemini_Model
 from src.gpt import GPT, GPT_Model
@@ -10,6 +11,7 @@ from src.util import matchOption, randomPickItem, combineQuestionAndOptionsFromI
 
 
 async def Answer(text,
+				options,
 				models: list = [Gemini_Model.GEMINI_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
 				timeout: float = 3.0):
 	llms = []
@@ -17,8 +19,37 @@ async def Answer(text,
 		llm = initLLM(model)
 		llms.append(llm)
 
-	tasks = [llm.answer(text, timeout=timeout) for llm in llms]
-	results = await asyncio.gather(*tasks)
+	tasks = [asyncio.create_task(llm.answer(text, timeout=timeout)) for llm in llms]
+	results = []
+	ans_indices = []
+	pending_tasks = set(tasks)
+
+	for fut in asyncio.as_completed(tasks):
+		try:
+			pending_tasks.discard(fut)
+			result = await fut
+			results.append(result)
+
+			if result['success']:
+				ans_index = matchOption(result['text'], options)
+			else:
+				ans_index = 0
+			ans_indices.append(ans_index)
+			successed_ans_indices = [index for index in ans_indices if index != 0]
+
+			if find_majority_element(successed_ans_indices, size=len(models)):
+				for task in pending_tasks:
+					try:
+						task.cancel()
+						result = await task
+						if result not in results:
+							results.append(result)
+					except asyncio.CancelledError:
+						pass
+				break
+		except asyncio.CancelledError:
+			pass
+
 	return results
 
 def initLLM(model):
@@ -34,13 +65,21 @@ def initLLM(model):
 def vote(results, options) -> int:
 	answer_indices = []
 	for result in results:
-		if result['text'] != 'None':
+		if result['success']:
 			answer_indices.append(matchOption(result['text'], options))
 	try:
 		index = max(set(answer_indices), key=answer_indices.count)
 	except:
 		index = 0
 	return index
+
+def find_majority_element(data, size):
+	element_counts = Counter(data)
+	for element, count in element_counts.items():
+		if count > size // 2:
+			return element
+
+	return None
 
 async def main() -> None:
 	with open('data/data.jsonl', 'r', encoding='utf8') as file:
@@ -52,7 +91,7 @@ async def main() -> None:
 
 	start_time = time.time()
 
-	results = await Answer(text)
+	results = await Answer(text, item['options'], timeout=3.0, models=models)
 	for result in results:
 		print(format(result['model'], '16s'), format(result['text'], '4s'), format(result['time_elapsed'], '4d'), 'ms')
 	print('Vote:', vote(results, item['options']))

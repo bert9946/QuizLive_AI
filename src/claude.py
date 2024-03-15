@@ -21,20 +21,28 @@ class Claude:
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
-
+		success = True
 		try:
 			response_data = await self.sendRequest(text, timeout=timeout)
-			response_text = self.parseResponseData(response_data)
+			response_text, is_error = self.parseResponseData(response_data)
+			if is_error:
+				success = False
+		except asyncio.CancelledError:
+			response_text = "CANCELLED"
+			success = False
 		except asyncio.exceptions.TimeoutError:
 			response_text = "TIMEOUT"
-		end_time = time.time()
+			success = False
+		finally:
+			end_time = time.time()
 
-		result = {
-			'model': str(self.model_id),
-			'text': response_text,
-			'time_elapsed': int((end_time - start_time) * 1000)
-		}
-		return result
+			result = {
+				'model': str(self.model_id),
+				'success': success,
+				'text': response_text,
+				'time_elapsed': int((end_time - start_time) * 1000)
+			}
+			return result
 
 	async def sendRequest(self, text, timeout: float = 3.0):
 		url = "https://api.anthropic.com/v1/messages"
@@ -57,12 +65,13 @@ class Claude:
 		async with aiohttp.ClientSession(timeout=timeout_) as session:
 			async with session.post(url, headers=headers, json=data) as response:
 				response_data = await response.json()
-				# response_text = response_data['content'][0]['text']
 		return response_data
 
 	def parseResponseData(self, response_data):
 		if response_data['type'] == 'message':
 			response_text = response_data['content'][0]['text']
+			is_error = False
 		elif response_data['type'] == 'error':
 			response_text = response_data['error']['type'].upper()
-		return response_text
+			is_error = True
+		return response_text, is_error

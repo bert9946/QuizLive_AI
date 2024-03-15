@@ -2,6 +2,7 @@ import time
 from openai import OpenAI, AsyncOpenAI
 from enum import Enum
 import re
+import asyncio
 
 
 class GPT_Model(Enum):
@@ -23,19 +24,27 @@ class GPT:
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = time.time()
+		success = True
 		self.client = AsyncOpenAI()
-		completion = await self.client.chat.completions.create(
-			model=self.model,
-			messages=[
-				{"role": "system", "content": self.SYSTEM_TEXT},
-				{"role": "user", "content": text}
-			],
-			timeout=timeout
-		)
-		end_time = time.time()
-		result = {
-			'model': str(self.model_id),
-			'text': completion.choices[0].message.content,
-			'time_elapsed': int((end_time - start_time) * 1000)
-		}
-		return result
+		try:
+			completion = await self.client.chat.completions.create(
+				model=self.model,
+				messages=[
+					{"role": "system", "content": self.SYSTEM_TEXT},
+					{"role": "user", "content": text}
+				],
+				timeout=timeout
+			)
+			response_text = completion.choices[0].message.content
+		except asyncio.CancelledError:
+			response_text = "CANCELLED"
+			success = False
+		finally:
+			end_time = time.time()
+			result = {
+				'model': str(self.model_id),
+				'success': success,
+				'text': response_text,
+				'time_elapsed': int((end_time - start_time) * 1000)
+			}
+			return result
