@@ -1,4 +1,4 @@
-import time
+from time import perf_counter
 import asyncio
 import json
 from collections import Counter
@@ -89,7 +89,7 @@ async def main() -> None:
 	real_ans_index = item['real_ans']
 	print(text)
 
-	start_time = time.time()
+	start_time = perf_counter()
 
 	results = []
 	async for result in Answer(text, item['options'], timeout=3.0, models=models):
@@ -97,7 +97,7 @@ async def main() -> None:
 		results.append(result)
 	print('Vote:', vote(results, item['options']))
 
-	end_time = time.time()
+	end_time = perf_counter()
 	print('Time:', int((end_time - start_time)*1000))
 
 	print('Real answer:', str(real_ans_index) + '. ' + item['options'][real_ans_index-1])

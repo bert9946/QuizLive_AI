@@ -1,6 +1,6 @@
 from enum import Enum
 import os
-import time
+from time import perf_counter
 import aiohttp
 import asyncio
 
@@ -20,7 +20,7 @@ class Claude:
 		self.__ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
 
 	async def answer(self, text, timeout: float = 3.0):
-		start_time = time.time()
+		start_time = perf_counter()
 		success = True
 		try:
 			response_data = await self.sendRequest(text, timeout=timeout)
@@ -34,7 +34,7 @@ class Claude:
 			response_text = "TIMEOUT"
 			success = False
 		finally:
-			end_time = time.time()
+			end_time = perf_counter()
 
 			result = {
 				'model': str(self.model_id),

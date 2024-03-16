@@ -1,4 +1,3 @@
-import time
 import datetime
 from termcolor import colored, cprint
 import argparse

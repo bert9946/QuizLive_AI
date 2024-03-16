@@ -1,4 +1,4 @@
-from time import time
+from time import perf_counter
 from termcolor import colored
 import json
 from enum import Enum
@@ -141,5 +141,5 @@ class TimeTag(Enum):
 
 class TimeStamp:
 	def __init__(self, name):
-		self.value = time()
+		self.value = perf_counter()
 		self.name = name

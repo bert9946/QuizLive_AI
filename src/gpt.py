@@ -1,4 +1,4 @@
-import time
+from time import perf_counter
 from openai import OpenAI, AsyncOpenAI
 from enum import Enum
 import re
@@ -23,7 +23,7 @@ class GPT:
 		self.model = self.model_id.value
 
 	async def answer(self, text, timeout: float = 3.0):
-		start_time = time.time()
+		start_time = perf_counter()
 		success = True
 		self.client = AsyncOpenAI()
 		try:
@@ -40,7 +40,7 @@ class GPT:
 			response_text = "CANCELLED"
 			success = False
 		finally:
-			end_time = time.time()
+			end_time = perf_counter()
 			result = {
 				'model': str(self.model_id),
 				'success': success,
