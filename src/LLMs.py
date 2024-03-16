@@ -100,7 +100,7 @@ async def main() -> None:
 	end_time = time.time()
 	print('Time:', int((end_time - start_time)*1000))
 
-	print('real', str(real_ans_index) + '. ' + item['options'][real_ans_index-1])
+	print('Real answer:', str(real_ans_index) + '. ' + item['options'][real_ans_index-1])
 
 if __name__ == '__main__':
 	asyncio.run(main())
