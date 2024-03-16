@@ -181,8 +181,6 @@ async def main():
 			dashboard.addRecord(record)
 
 			dashboard.printAnswer()
-			if ans_source == 'LLM':
-				dashboard.printLLMResponses()
 			dashboard.printSource()
 			dashboard.printTimes()
 
