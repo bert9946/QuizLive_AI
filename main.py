@@ -23,6 +23,7 @@ async def main():
 	parser = argparse.ArgumentParser(description='Quiz Live AI')
 	parser.add_argument('--test', action='store_true', help="won't save data to file")
 	parser.add_argument('-c', '--continuous', action='store_true', help="continuous mode")
+	parser.add_argument('--no-database', action='store_true', help="don't match question from database")
 	parser.add_argument('--stage-master', action='store_true', help="match stage master")
 
 	args = parser.parse_args()
@@ -157,7 +158,7 @@ async def main():
 			record.setOptions(options)
 
 			# Match question from database
-			if ans_index := matchQuestionFromDatabase(text, data):
+			if not args.no_database and (ans_index := matchQuestionFromDatabase(text, data)):
 				ans_source = 'database'
 			else: # LLM
 				responses = await Answer(text, options, models=MODELS, timeout=timeout)
