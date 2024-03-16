@@ -131,6 +131,7 @@ async def main():
 			question_image = image[:300, :]
 			question = await image2text(question_image)
 			question = processQuestion(question)
+			cprint(question, 'light_grey')
 
 			time_stamps.append(TimeStamp('question_capturing_time'))
 			question_capturing_time = time_stamps[-1].value - time_stamps[-2].value
@@ -145,6 +146,8 @@ async def main():
 
 			tasks = [image2text(image) for image in option_images]
 			options = await asyncio.gather(*tasks)
+			for option in options:
+				cprint(option, 'light_grey')
 			time_stamps.append(TimeStamp('options_capturing_time'))
 
 			text = combineQuestionAndOptions(question, options)
@@ -152,8 +155,6 @@ async def main():
 			record = Record()
 			record.setQuestion(question)
 			record.setOptions(options)
-
-			cprint(text, 'light_grey')
 
 			# Match question from database
 			if ans_index := matchQuestionFromDatabase(text, data):
