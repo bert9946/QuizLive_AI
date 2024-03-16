@@ -13,7 +13,10 @@ class Record:
 		self.source = source
 
 	def isAnswerCorrect(self):
-		return int(self.ans[0]) == self.real_ans_index
+		ans_index = int(self.ans[0])
+		if ans_index not in [1, 2, 3, 4]:
+			return False
+		return ans_index == self.real_ans_index
 
 	def setImagePath(self, image_path):
 		self.image_path = image_path
