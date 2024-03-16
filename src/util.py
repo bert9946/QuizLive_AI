@@ -171,3 +171,6 @@ def matchImage(needle_image, haystack_image, mask_image_path=None, crop_coords=N
     if max_val >= threshold:
         return max_loc[0] * 2 + button_w + x * 2, max_loc[1] * 2 + button_h + y * 2
     return None
+
+def printLLMResponse(response):
+    print(format(response['model'], '16s'), format(response['text'], '8s'), format(response['time_elapsed'], '4d'), 'ms')
