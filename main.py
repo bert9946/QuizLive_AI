@@ -123,6 +123,7 @@ async def main():
 			time_stamps = []
 			print(colored('Triggered', 'dark_grey'), end='\r', flush=True)
 			await asyncio.sleep(2)
+			print(' '*10, end='\r', flush=True)
 
 			time_stamps.append(TimeStamp('start_time'))
 			# Capture question
@@ -140,7 +141,6 @@ async def main():
 
 			# Capture options
 			complete_image = wincap.get_image_from_window()
-			print(colored('Captured', 'dark_grey'), end='\r', flush=True)
 			image = preprocess_image(complete_image)
 			option_images = [image[380+i*160:508+i*160, 30:450] for i in range(4)]
 
