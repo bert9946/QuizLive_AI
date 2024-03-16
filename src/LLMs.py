@@ -29,6 +29,7 @@ async def Answer(text,
 			pending_tasks.discard(fut)
 			result = await fut
 			results.append(result)
+			yield result
 
 			if result['success']:
 				ans_index = matchOption(result['text'], options)
@@ -44,13 +45,12 @@ async def Answer(text,
 						result = await task
 						if result not in results:
 							results.append(result)
+							yield result
 					except asyncio.CancelledError:
 						pass
 				break
 		except asyncio.CancelledError:
 			pass
-
-	return results
 
 def initLLM(model):
 	if isinstance(model, Gemini_Model):
@@ -91,9 +91,10 @@ async def main() -> None:
 
 	start_time = time.time()
 
-	results = await Answer(text, item['options'], timeout=3.0, models=models)
-	for result in results:
+	results = []
+	async for result in Answer(text, item['options'], timeout=3.0, models=models):
 		print(format(result['model'], '16s'), format(result['text'], '4s'), format(result['time_elapsed'], '4d'), 'ms')
+		results.append(result)
 	print('Vote:', vote(results, item['options']))
 
 	end_time = time.time()

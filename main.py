@@ -161,7 +161,10 @@ async def main():
 			if not args.no_database and (ans_index := matchQuestionFromDatabase(text, data)):
 				ans_source = 'database'
 			else: # LLM
-				responses = await Answer(text, options, models=MODELS, timeout=timeout)
+				responses = []
+				async for response in Answer(text, options, models=MODELS, timeout=timeout):
+					responses.append(response)
+					printLLMResponse(response)
 				record.setLLMResponses(responses)
 				ans_index = vote(responses, options)
 				ans_source = 'LLM'
