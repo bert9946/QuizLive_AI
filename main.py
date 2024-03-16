@@ -80,39 +80,39 @@ async def main():
 				for template in templates:
 					if button := matchImage(template, image):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 
 				if args.stage_master:
 					if button := matchImage('assets/match_again.jpg', image, crop_coords=(87, 1326, 130, 40)):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 					if matchImage('assets/free_trial.jpg', image, crop_coords=(290, 507, 150, 40)):
 						if button := matchImage('assets/dont_show_for_today.jpg', image, crop_coords=(60, 1440, 200, 40)):
 							simulateTap(button)
-							time.sleep(2)
+							await asyncio.sleep(2)
 					if button := matchImage('assets/confirm_4.jpg', image, crop_coords=(420, 850, 150, 50)):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(2)
 					if button := matchImage('assets/confirm.jpg', image, crop_coords=(545, 943, 77, 44)):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 					if button := matchImage('assets/master_beaten.jpg', image, crop_coords=(240, 1300, 250, 70)):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 					if button := matchImage('assets/circle_2.jpg', image, mask_image_path='assets/circle_mask_2.jpg', crop_coords=(90, 370, 554, 907), threshold=0.65):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 					if matchImage('assets/hint.jpg', image, crop_coords=(327, 505, 77, 45)):
 						if button := matchImage('assets/close.jpg', image, crop_coords=(560, 506, 27, 24)):
 							simulateTap(button)
-							time.sleep(1)
+							await asyncio.sleep(1)
 					if matchImage('assets/trophy.jpg', image, crop_coords=(460, 640, 70, 60)):
 						if button := matchImage('assets/confirm_3.jpg', image, crop_coords=(440, 945, 110, 40)):
 							simulateTap(button)
-							time.sleep(1)
+							await asyncio.sleep(1)
 					if button := matchImage('assets/stage_completed.jpg', image, crop_coords=(160, 680, 420, 120)):
 						simulateTap(button)
-						time.sleep(1)
+						await asyncio.sleep(1)
 
 
 		if not is_triggered(image):
