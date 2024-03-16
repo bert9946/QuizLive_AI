@@ -33,6 +33,9 @@ class Claude:
 		except asyncio.exceptions.TimeoutError:
 			response_text = "TIMEOUT"
 			success = False
+		except Exception:
+			response_text = "ERROR"
+			success = False
 		finally:
 			end_time = perf_counter()
 
