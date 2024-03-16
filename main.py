@@ -162,6 +162,7 @@ async def main():
 				ans_source = 'database'
 			else: # LLM
 				responses = []
+				print('\n')
 				async for response in Answer(text, options, models=MODELS, timeout=timeout):
 					responses.append(response)
 					printLLMResponse(response)
