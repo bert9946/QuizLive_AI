@@ -146,6 +146,7 @@ async def main():
 
 			tasks = [image2text(image) for image in option_images]
 			options = await asyncio.gather(*tasks)
+			options = [option.replace('\n', '') for option in options]
 			for option in options:
 				cprint(option, 'light_grey')
 			time_stamps.append(TimeStamp('options_capturing_time'))
