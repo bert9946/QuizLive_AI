@@ -3,19 +3,22 @@ from time import perf_counter
 import aiohttp
 import asyncio
 from enum import Enum
+import re
 
 class Gemini_Model(Enum):
-	GEMINI_PRO = "gemini-pro"
+	GEMINI_1_0_PRO = "gemini-1.0-pro"
+	GEMINI_1_5_PRO = "gemini-1.5-pro"
 
 	def __str__(self):
-		name = '-'.join(x.capitalize() for x in self.name.split('_'))
+		name = re.sub(r'(\d)_(\d)', r'\1.\2', self.name)
+		name = '-'.join(x.capitalize() for x in name.split('_'))
 		return name
 
 
 class Gemini:
 	SYSTEM_PROMPT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不要解釋原因，只要回答選項文字）"
 
-	def __init__(self, model_id=Gemini_Model.GEMINI_PRO):
+	def __init__(self, model_id=Gemini_Model.GEMINI_1_5_PRO):
 		GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 		self.model_id = model_id
 		self.model_name = self.model_id.value

@@ -12,7 +12,7 @@ from src.util import matchOption, randomPickItem, combineQuestionAndOptionsFromI
 
 async def Answer(text,
 				options,
-				models: list = [Gemini_Model.GEMINI_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
+				models: list = [Gemini_Model.GEMINI_1_0_PRO, Claude_Model.CLAUDE_3_SONNET, GPT_Model.GPT_3_5_TURBO],
 				timeout: float = 3.0):
 	llms = []
 	for model in models:
