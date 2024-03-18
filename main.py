@@ -31,7 +31,7 @@ async def main():
 	wincap = WindowCapture(window_name)
 
 	dashboard = Dashboard()
-	MODELS = [Gemini_Model.GEMINI_PRO,
+	MODELS = [Gemini_Model.GEMINI_1_5_PRO,
 				Claude_Model.CLAUDE_3_SONNET,
 				# Claude_Model.CLAUDE_3_OPUS,
 				GPT_Model.GPT_3_5_TURBO,
