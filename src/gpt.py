@@ -1,5 +1,5 @@
 from time import perf_counter
-from openai import OpenAI, AsyncOpenAI
+from openai import AsyncOpenAI
 from enum import Enum
 import re
 import asyncio
