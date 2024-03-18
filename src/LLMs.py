@@ -6,6 +6,7 @@ from collections import Counter
 from src.gemini import Gemini, Gemini_Model
 from src.gpt import GPT, GPT_Model
 from src.claude import Claude, Claude_Model
+from src.perplexity import Perplexity, Perplexity_Model
 
 from src.util import matchOption, randomPickItem, combineQuestionAndOptionsFromItem
 
@@ -59,6 +60,8 @@ def initLLM(model):
 		return Claude(model)
 	elif isinstance(model, GPT_Model):
 		return GPT(model)
+	elif isinstance(model, Perplexity_Model):
+		return Perplexity(model)
 	else:
 		raise ValueError('Invalid model')
 
