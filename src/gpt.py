@@ -18,14 +18,13 @@ class GPT_Model(Enum):
 class GPT:
 	SYSTEM_TEXT = "你是問答遊戲的 AI。根據問題，簡短回答最可能的答案。（不用解釋原因，只要回答選項文字）"
 	def __init__(self, model_id=GPT_Model.GPT_3_5_TURBO):
-		self.client = OpenAI()
+		self.client = AsyncOpenAI()
 		self.model_id = model_id
 		self.model = self.model_id.value
 
 	async def answer(self, text, timeout: float = 3.0):
 		start_time = perf_counter()
 		success = True
-		self.client = AsyncOpenAI()
 		try:
 			completion = await self.client.chat.completions.create(
 				model=self.model,
